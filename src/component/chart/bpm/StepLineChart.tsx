@@ -123,7 +123,7 @@ const EcgChart = forwardRef((_, ref) => {
             return Number(value) / 100;
           },
           autoSkip: true,
-          maxTicksLimit: 50,
+          maxTicksLimit: 20,
         },
       },
       y: {
@@ -218,6 +218,25 @@ const EcgChart = forwardRef((_, ref) => {
       return false;
     },
   };
+  // const FixedVerticalBarPlugin = {
+  //   id: 'fixedVerticalBar',
+  //   beforeDraw(chart) {
+  //     const { ctx, chartArea } = chart;
+
+  //     // 고정된 수직 막대기의 X 위치 (픽셀 단위)
+  //     const fixedX = chartArea.left + 200; // 화면 왼쪽에서 200px
+
+  //     // 차트 영역에 수직 막대 그리기
+  //     ctx.save();
+  //     ctx.beginPath();
+  //     ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)'; // 막대기 색상
+  //     ctx.lineWidth = 2; // 막대기 너비
+  //     ctx.moveTo(fixedX, chartArea.top); // 차트 상단
+  //     ctx.lineTo(fixedX, chartArea.bottom); // 차트 하단
+  //     ctx.stroke();
+  //     ctx.restore();
+  //   },
+  // };
 
   return (
     <div style={{ width: 'inherit', height: 'inherit' }}>

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mars3d/heatmap.js": "^2.0.7",
+    "@types/react-plotly.js": "^2.6.3",
     "@types/seedrandom": "^3.0.8",
     "chart.js": "^4.4.7",
     "chartjs-plugin-zoom": "^2.2.0",

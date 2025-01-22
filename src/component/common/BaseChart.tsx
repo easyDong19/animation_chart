@@ -9,9 +9,9 @@ type WrapperType = {
 type HeaderType = {
   title: string;
   isBtn: boolean;
-  start: () => void;
-  stop: () => void;
-  reset: () => void;
+  start?: () => void;
+  stop?: () => void;
+  reset?: () => void;
 };
 const Header = ({ title, isBtn, start, stop, reset }: HeaderType) => {
   return (
@@ -61,10 +61,10 @@ const BaseChartMain = ({ children }: WrapperType) => {
       {/* 헤더 컴포넌트 */}
       {header}
 
-      <div className='flex-col w-full h-full p-4 bg-white border rounded-lg border-slate-400'>
-        <div className='w-full h-3/4'>{content}</div>
+      <div className='flex-col w-full h-auto p-4 bg-white border rounded-lg border-slate-400'>
+        <div className='w-full h-4/6'>{content}</div>
         <div className='flex items-center justify-between w-full'>
-          <div>설명서</div>
+          <div></div>
           {footer}
         </div>
       </div>

@@ -2,8 +2,9 @@ import { useRef } from 'react';
 import EcgChart from './component/chart/ecg/EcgChart';
 import { BaseChart } from './component/common/BaseChart';
 import Slider from './component/common/Slider';
-import BpmChart from './component/chart/bpm/BpmChart';
 import SteppedLineChart from './component/chart/bpm/StepLineChart';
+import MagneticFieldMap from './component/chart/magnetic/MagneticFieldMap';
+import PolarScatterChart from './component/chart/radar/PolarChart';
 
 function App() {
   const chartRef_line = useRef<{
@@ -19,8 +20,9 @@ function App() {
     resetGraph: () => void;
     changeSpeed: (newSpeed: number) => void;
   }>(null);
+
   return (
-    <div className='w-full h-full p-5 App '>
+    <div className='w-full h-auto p-10 App '>
       <div className='mb-5 text-3xl font-bold'>애니메이션 차트 종류</div>
 
       <div className='flex flex-col w-full h-full gap-20'>
@@ -72,6 +74,27 @@ function App() {
                 }
               />
             </BaseChart.footer>
+          </BaseChart>
+        </div>
+
+        <div>
+          <BaseChart>
+            <BaseChart.header isBtn={false} title={'HeatMap'} />
+            <BaseChart.content>
+              <div className='flex flex-row gap-5'>
+                <MagneticFieldMap isBlur={true} />
+                <MagneticFieldMap isBlur={false} />
+              </div>
+            </BaseChart.content>
+          </BaseChart>
+        </div>
+
+        <div>
+          <BaseChart>
+            <BaseChart.header isBtn={false} title={'Polar graph'} />
+            <BaseChart.content>
+              <PolarScatterChart />
+            </BaseChart.content>
           </BaseChart>
         </div>
       </div>

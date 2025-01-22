@@ -16,6 +16,7 @@ import {
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { useInterval } from '../../../util/useInterval';
 import seedrandom from 'seedrandom';
+import SignalData from './SignalData';
 
 ChartJS.register(
   LineElement,
@@ -51,10 +52,20 @@ const EcgChart = forwardRef((_, ref) => {
     return data;
   };
 
+  // const generateTmpData = () => {
+  //   const data = [];
+
+  //   SignalData.forEach((item, idx) => {
+  //     data.push({ x: idx, y: item });
+  //   });
+  //   return data;
+  // };
+
   const moveXAxis = (chart: ChartJS<'line'>) => {
     if (!chart.options.scales || !chart.options.scales.x) return;
 
     const { min, max } = xAxisRange;
+    // 찍는 프레임을 고치지말고 여기 한번에 가는 걸 고쳐보자
 
     const newMin = Math.max(0, min + 1);
     const newMax = max + 1;
