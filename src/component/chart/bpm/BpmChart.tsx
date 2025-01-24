@@ -17,7 +17,7 @@ const DiscreteScatterChart = () => {
   const chartRef = useRef<ChartJS<'line'> | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [xAxisRange, setXAxisRange] = useState({ min: 0, max: 100 });
-  const [speedRange, setSpeedRange] = useState(40);
+  const [speedRange, setSpeedRange] = useState(20);
   const totalDataPoints = 10000;
 
   const generateTmpData = () => {

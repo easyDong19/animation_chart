@@ -5,6 +5,7 @@ import Slider from './component/common/Slider';
 import SteppedLineChart from './component/chart/bpm/StepLineChart';
 import MagneticFieldMap from './component/chart/magnetic/MagneticFieldMap';
 import PolarScatterChart from './component/chart/radar/PolarChart';
+import { MagneticArrowFieldMap } from './component/chart/magnetic/MagneticArrowFiledMap';
 
 function App() {
   const chartRef_line = useRef<{
@@ -94,6 +95,15 @@ function App() {
             <BaseChart.header isBtn={false} title={'Polar graph'} />
             <BaseChart.content>
               <PolarScatterChart />
+            </BaseChart.content>
+          </BaseChart>
+        </div>
+
+        <div>
+          <BaseChart>
+            <BaseChart.header isBtn={false} title={'magnetic arrow'} />
+            <BaseChart.content>
+              <MagneticArrowFieldMap />
             </BaseChart.content>
           </BaseChart>
         </div>

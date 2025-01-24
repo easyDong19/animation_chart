@@ -16,7 +16,6 @@ import {
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { useInterval } from '../../../util/useInterval';
 import seedrandom from 'seedrandom';
-import SignalData from './SignalData';
 
 ChartJS.register(
   LineElement,
@@ -31,7 +30,7 @@ const EcgChart = forwardRef((_, ref) => {
   const chartRef = useRef<ChartJS<'line'> | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [xAxisRange, setXAxisRange] = useState({ min: 0, max: 100 });
-  const [speedRange, setSpeedRange] = useState(40);
+  const [speedRange, setSpeedRange] = useState(20);
   const totalDataPoints = 10000;
 
   const generateTmpData = () => {
@@ -163,19 +162,19 @@ const EcgChart = forwardRef((_, ref) => {
             }
           },
         },
-        // zoom: {
-        //   wheel: {
-        //     enabled: true,
-        //   },
-        //   pinch: {
-        //     enabled: true,
-        //   },
-        //   mode: 'x',
-        //   onZoomComplete: (ctx) => {
-        //     const { min, max } = ctx.chart.scales.x;
-        //     setXAxisRange({ min, max });
-        //   },
-        // },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+          onZoomComplete: (ctx) => {
+            const { min, max } = ctx.chart.scales.x;
+            setXAxisRange({ min, max });
+          },
+        },
       },
     },
   };
