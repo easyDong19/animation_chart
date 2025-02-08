@@ -1,11 +1,11 @@
 import { useRef } from 'react';
-import EcgChart from './component/chart/ecg/EcgChart';
+import EcgChart from './component/protoChart/ecg/EcgChart';
 import { BaseChart } from './component/common/BaseChart';
 import Slider from './component/common/Slider';
-import SteppedLineChart from './component/chart/bpm/StepLineChart';
-import MagneticFieldMap from './component/chart/magnetic/MagneticFieldMap';
-import PolarScatterChart from './component/chart/radar/PolarChart';
-import { MagneticArrowFieldMap } from './component/chart/magnetic/MagneticArrowFiledMap';
+import SteppedLineChart from './component/protoChart/bpm/StepLineChart';
+import MagneticFieldMap from './component/protoChart/magnetic/MagneticFieldMap';
+import PolarScatterChart from './component/protoChart/radar/PolarChart';
+import { MagneticArrowFieldMap } from './component/protoChart/magnetic/MagneticArrowFiledMap';
 
 function ProtoTypeChart() {
   const chartRef_line = useRef<{
