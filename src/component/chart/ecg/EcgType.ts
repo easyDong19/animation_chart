@@ -12,9 +12,6 @@ export type YaxisType = {
 
 export type EcgChartType = {
   axis: XaxisType & YaxisType;
-  isPlaying: boolean;
-  speed: number;
-  interval: number;
 };
 
-export type EcgChartAction = 'move' | 'reset' | 'changeSpeed';
+export type EcgChartAction = 'MOVE' |'RESET' | 'CHANGESPEEDX2' | 'CHANGESPEEDX5' | 'CHANGESPEEDX10';
