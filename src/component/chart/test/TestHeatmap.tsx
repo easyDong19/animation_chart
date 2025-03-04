@@ -8,9 +8,9 @@ const generateChartData = (size: number, dataLength: number = 30) => {
     )
   );
 };
+const z = generateChartData(30, 500);
 
 export const TestHeatmap = () => {
-  const z = generateChartData(30, 500);
   const { x, y, index, startAutoPlay, stopAutoPlay, resetChart, changeSpeed } =
     useHeatmapChart(30, z.length);
 

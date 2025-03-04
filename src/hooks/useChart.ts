@@ -90,13 +90,15 @@ const useChart = (initState: ChartInitialState) => {
     dispatch({ type: 'CHANGE_SPEED', payload: changeSpeed });
   };
 
-  const handleRelayOut = (newLayout: any) => {
+  const handleRelayOut = (
+    newLayout: Partial<Layout> & Record<string, unknown>
+  ) => {
     let newXRange = layout.xaxis?.range || [0, 10];
     const newYRange = layout.yaxis?.range || [0, 10];
 
     if (
-      newLayout['xaxis.range[0]'] !== undefined &&
-      newLayout['xaxis.range[1]'] !== undefined
+      typeof newLayout['xaxis.range[0]'] === 'number' &&
+      typeof newLayout['xaxis.range[1]'] === 'number'
     ) {
       newXRange = [
         Math.max(0, newLayout['xaxis.range[0]']),
@@ -110,7 +112,6 @@ const useChart = (initState: ChartInitialState) => {
       yaxis: { ...layout.yaxis, range: newYRange },
     });
   };
-
   return {
     layout,
     startAutoMove,
