@@ -4,6 +4,7 @@ import { Layout } from 'plotly.js';
 
 const initialState = {
   xRange: [0, 10],
+  yRange: [-40, 40],
   speed: 1,
 };
 
@@ -12,7 +13,7 @@ function reducer(state, action) {
     case 'MOVE':
       return {
         ...state,
-        xRange: state.xRange.map((val) => val + 10 * state.speed),
+        xRange: state.xRange.map((val: number) => val + 10 * state.speed),
       };
     case 'RESET':
       return initialState;
@@ -49,13 +50,11 @@ const EcgChart = () => {
   };
 
   const [layout, setLayout] = useState<Partial<Layout>>({
-    title: 'ecg 차트',
-    xaxis: { range: [0, 10] },
-    yaxis: { range: [0, 10] },
+    autosize: true,
+
     dragmode: 'pan' as const,
   });
 
-  // state.xRange가 변경될 때마다 layout의 xaxis.range를 업데이트
   useEffect(() => {
     setLayout((prevLayout) => ({
       ...prevLayout,
@@ -63,9 +62,16 @@ const EcgChart = () => {
     }));
   }, [state.xRange]);
 
+  useEffect(() => {
+    setLayout((prevLayout) => ({
+      ...prevLayout,
+      yaxis: { range: state.yRange },
+    }));
+  }, []);
+
   const handleRelayout = (newLayout: any) => {
     let newXRange = layout.xaxis?.range || [0, 10];
-    let newYRange = layout.yaxis?.range || [0, 10];
+    const newYRange = layout.yaxis?.range || [0, 10];
 
     if (
       newLayout['xaxis.range[0]'] !== undefined &&
@@ -74,16 +80,6 @@ const EcgChart = () => {
       newXRange = [
         Math.max(0, newLayout['xaxis.range[0]']),
         newLayout['xaxis.range[1]'],
-      ];
-    }
-
-    if (
-      newLayout['yaxis.range[0]'] !== undefined &&
-      newLayout['yaxis.range[1]'] !== undefined
-    ) {
-      newYRange = [
-        Math.max(0, newLayout['yaxis.range[0]']),
-        newLayout['yaxis.range[1]'],
       ];
     }
 

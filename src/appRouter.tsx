@@ -7,7 +7,7 @@ import {
 import Layout from './Layout';
 import ProtoTypeChart from './ProtoTypeChart';
 import EcgChart from './component/chart/ecg/EcgChart';
-import TestChart from './component/chart/test/TestChart';
+import { TestChart } from './component/chart/test/TestChart';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
