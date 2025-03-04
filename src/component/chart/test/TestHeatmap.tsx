@@ -1,45 +1,31 @@
-import useChart from '../../../hooks/useChart';
 import Plot from 'react-plotly.js';
-const generateChartData = () => {
-  const numPoints = 1000;
-  const x = Array.from({ length: numPoints }, (_, i) => i * 2);
-  const y = Array.from(
-    { length: numPoints },
-    () => Math.floor(Math.random() * 40) + 10
+import { useHeatmapChart } from '../../../hooks/useHeatmapChart';
+
+const generateChartData = (size: number, dataLength: number = 30) => {
+  return Array.from({ length: dataLength }, () =>
+    Array.from({ length: size }, () =>
+      Array.from({ length: size }, () => Math.floor(Math.random() * 100))
+    )
   );
-  return { x, y };
 };
 
-const chartData = generateChartData();
-
-export const TestChart = () => {
-  const initialState = {
-    xRange: [0, 500],
-    yRange: [0, 50],
-    speed: 1,
-  };
-
-  const {
-    layout,
-    startAutoMove,
-    stopAutoMove,
-    resetChart,
-    changeSpeed,
-    handleRelayOut,
-  } = useChart(initialState);
+export const TestHeatmap = () => {
+  const z = generateChartData(30, 500);
+  const { x, y, index, startAutoPlay, stopAutoPlay, resetChart, changeSpeed } =
+    useHeatmapChart(30, z.length);
 
   return (
     <div className='flex flex-col'>
       <div>버튼 리스트</div>
       <div className='flex flex-row gap-4 my-4'>
         <button
-          onClick={startAutoMove}
+          onClick={startAutoPlay}
           className='px-4 py-2 font-semibold text-white transition duration-300 bg-green-500 rounded-lg shadow-md hover:bg-green-600'
         >
           시작
         </button>
         <button
-          onClick={stopAutoMove}
+          onClick={stopAutoPlay}
           className='px-4 py-2 font-semibold text-white transition duration-300 bg-red-500 rounded-lg shadow-md hover:bg-red-600'
         >
           중지
@@ -71,17 +57,28 @@ export const TestChart = () => {
       <Plot
         data={[
           {
-            x: chartData.x,
-            y: chartData.y,
-            type: 'scatter',
-            mode: 'lines+markers',
-            marker: { color: 'blue' },
+            x: x,
+            y: y,
+            z: z[index],
+            type: 'heatmap',
+            colorscale: 'Jet',
+            zsmooth: 'best',
           },
         ]}
-        onRelayout={handleRelayOut}
-        layout={layout}
-        config={{ displayModeBar: false, scrollZoom: true, responsive: true }}
-        style={{ width: '100%', height: '100%' }}
+        config={{
+          displayModeBar: false,
+          scrollZoom: false,
+          responsive: true,
+          staticPlot: true,
+        }}
+        layout={{
+          title: '30x30 Heatmap (Blur Effect)',
+          autosize: false,
+          width: 800,
+          height: 800,
+          xaxis: { visible: false },
+          yaxis: { visible: false },
+        }}
       />
     </div>
   );

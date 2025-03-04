@@ -6,6 +6,8 @@ export function useInterval(
   startAfter: number = 0
 ) {
   const savedCallback = useRef<() => void>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     savedCallback.current = callback;
@@ -18,14 +20,19 @@ export function useInterval(
       }
     }
 
-    if (delay !== null) {
-      const startTimeout = setTimeout(() => {
-        tick();
-        const id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }, startAfter);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (intervalRef.current) clearInterval(intervalRef.current);
 
-      return () => clearTimeout(startTimeout);
+    if (delay !== null) {
+      timeoutRef.current = setTimeout(() => {
+        tick();
+        intervalRef.current = setInterval(tick, delay);
+      }, startAfter);
     }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [delay, startAfter]);
 }

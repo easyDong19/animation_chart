@@ -13,15 +13,15 @@ type ChartActionType = {
 };
 
 const useChart = (initState: ChartInitialState) => {
-  const [state, dispatch] = useReducer(reducer, initState);
   const [layout, setLayout] = useState<Partial<Layout>>({
     autosize: true,
     dragmode: 'pan' as const,
   });
 
   const initialStateRef = useRef(initState);
-  const isMovingRef = useRef<boolean | null>(false);
+  const [isMoving, setIsMoving] = useState(false);
 
+  const [state, dispatch] = useReducer(reducer, initState);
   function reducer(
     state: ChartInitialState,
     action: ChartActionType
@@ -30,7 +30,7 @@ const useChart = (initState: ChartInitialState) => {
       case 'MOVE':
         return {
           ...state,
-          xRange: state.xRange.map((val) => val + 10 * state.speed) as [
+          xRange: state.xRange.map((val) => val + 1 * state.speed) as [
             number,
             number
           ],
@@ -40,7 +40,10 @@ const useChart = (initState: ChartInitialState) => {
       case 'CHANGE_SPEED':
         return {
           ...state,
-          speed: action.payload ?? state.speed,
+          speed:
+            action.payload && state.speed + action.payload > 0
+              ? state.speed + action.payload
+              : state.speed,
         };
       default:
         return state;
@@ -49,11 +52,11 @@ const useChart = (initState: ChartInitialState) => {
 
   useInterval(
     () => {
-      if (isMovingRef.current) {
+      if (isMoving) {
         dispatch({ type: 'MOVE' });
       }
     },
-    isMovingRef.current ? 25 : null
+    isMoving ? 25 : null
   );
 
   // x축이 이동 될 때마다 range도 변경
@@ -73,11 +76,11 @@ const useChart = (initState: ChartInitialState) => {
   }, []);
 
   const startAutoMove = () => {
-    isMovingRef.current = true;
+    setIsMoving(true);
   };
 
   const stopAutoMove = () => {
-    isMovingRef.current = false;
+    setIsMoving(false);
   };
 
   const resetChart = () => {
@@ -87,7 +90,35 @@ const useChart = (initState: ChartInitialState) => {
     dispatch({ type: 'CHANGE_SPEED', payload: changeSpeed });
   };
 
-  return { layout, startAutoMove, stopAutoMove, resetChart, changeSpeed };
+  const handleRelayOut = (newLayout: any) => {
+    let newXRange = layout.xaxis?.range || [0, 10];
+    const newYRange = layout.yaxis?.range || [0, 10];
+
+    if (
+      newLayout['xaxis.range[0]'] !== undefined &&
+      newLayout['xaxis.range[1]'] !== undefined
+    ) {
+      newXRange = [
+        Math.max(0, newLayout['xaxis.range[0]']),
+        newLayout['xaxis.range[1]'],
+      ];
+    }
+
+    setLayout({
+      ...layout,
+      xaxis: { ...layout.xaxis, range: newXRange },
+      yaxis: { ...layout.yaxis, range: newYRange },
+    });
+  };
+
+  return {
+    layout,
+    startAutoMove,
+    stopAutoMove,
+    resetChart,
+    changeSpeed,
+    handleRelayOut,
+  };
 };
 
 export default useChart;
