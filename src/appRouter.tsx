@@ -9,6 +9,7 @@ import ProtoTypeChart from './ProtoTypeChart';
 import { TestChart } from './component/chart/test/TestChart';
 import { HeatmapTest } from './component/chart/heatmap/HeatmapTest';
 import { TestHeatmap } from './component/chart/test/TestHeatmap';
+import { TestBPMChart } from './component/chart/test/TestBPMChart';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -17,6 +18,8 @@ export const AppRouter = () => {
       <Route path='/test' element={<TestChart />} />
       <Route path='/heatmap' element={<HeatmapTest />} />
       <Route path='/heatmaptest' element={<TestHeatmap />} />
+      <Route path='/bpmtest' element={<TestBPMChart />} />
+      {/* <Route path='/experiment' element={<TmpTestChart />} /> */}
     </Route>
   );
 

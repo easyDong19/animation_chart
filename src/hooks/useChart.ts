@@ -19,6 +19,8 @@ const useChart = (initState: ChartInitialState) => {
   });
 
   const initialStateRef = useRef(initState);
+  console.log(initialStateRef);
+
   const [isMoving, setIsMoving] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, initState);
@@ -36,7 +38,7 @@ const useChart = (initState: ChartInitialState) => {
           ],
         };
       case 'RESET':
-        return initialStateRef.current;
+        return { ...initialStateRef.current };
       case 'CHANGE_SPEED':
         return {
           ...state,
