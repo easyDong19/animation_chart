@@ -11,6 +11,8 @@ import { TestHeatmap } from './component/chart/test/TestHeatmap';
 import { TestBPMChart } from './component/chart/test/TestBPMChart';
 import XAxisMovingChart from './component/chart/test/TmpTestChart';
 import HeatmapRChart from './component/chart/test/TestHeatmapR';
+import { DyChart } from './component/dyChart/dyChart';
+import DyChartPage from './DyChartPage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -21,6 +23,9 @@ export const AppRouter = () => {
       <Route path='/bpmtest' element={<TestBPMChart />} />
       <Route path='/experiment' element={<XAxisMovingChart />} />
       <Route path='/experiment2' element={<HeatmapRChart />} />
+      <Route path='/dychart/' element={<Layout />}>
+        <Route index element={<DyChartPage />} />
+      </Route>
     </Route>
   );
 
