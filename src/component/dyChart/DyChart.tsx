@@ -1,9 +1,31 @@
 import classNames from 'classnames';
 import React from 'react';
-
+import { IFieldComponents } from './types/dynamicChart.type';
+import { isArray } from 'lodash';
 // 공통된 요소
 // data, layout, config
-const chartComponents = {};
+const ChartComponents = {
+  title: ({ field }: IFieldComponents) => {
+    <>
+      {field?.title && (
+        <div
+          className={classNames(
+            field?.opts?.className,
+            'text-sm text-stone-800'
+          )}
+        >
+          {field.title}
+        </div>
+      )}
+    </>;
+  },
+};
+
+const renderField = (field: any, idx: number) => {
+  if (field.fields && isArray(field.fields)) {
+    return <div></div>;
+  }
+};
 
 const ChartContainer = ({
   children,
@@ -14,10 +36,16 @@ const ChartContainer = ({
 }) => {
   return <div className={className}>{children}</div>;
 };
-export const DyChart = ({ className }: { className: string }) => {
+export const DyChart = ({
+  className,
+  chartSchema,
+}: {
+  className: string;
+  chartSchema: any;
+}) => {
   return (
     <ChartContainer className={className}>
-      <div className='col-span-12 bg-slate-600'>
+      <div>
         <div>a</div>
         <div>b</div>
       </div>
