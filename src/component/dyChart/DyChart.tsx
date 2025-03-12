@@ -2,53 +2,44 @@ import classNames from 'classnames';
 import React from 'react';
 import { IFieldComponents } from './types/dynamicChart.type';
 import { isArray } from 'lodash';
+import { ChartContainer } from './component/ChartContainer';
+import { Title } from './component/header/Title';
 // 공통된 요소
 // data, layout, config
-const ChartComponents = {
-  title: ({ field }: IFieldComponents) => {
-    <>
-      {field?.title && (
-        <div
-          className={classNames(
-            field?.opts?.className,
-            'text-sm text-stone-800'
-          )}
-        >
-          {field.title}
-        </div>
-      )}
-    </>;
-  },
+
+/**
+ * 헤더 안에 버튼과 제목
+ */
+const fieldComponents = {
+  title: ({ field }) => <Title name={field.name} />,
 };
 
 const renderField = (field: any, idx: number) => {
   if (field.fields && isArray(field.fields)) {
-    return <div></div>;
+    return (
+      <div
+        key={`nested_${idx}`}
+        className={classNames('w-full', field.className)}
+      ></div>
+    );
   }
+
+  const FieldComponent = fieldComponents[field.type];
+  if (!FieldComponent) return null;
+
+  return <div key={`${field.name}_${idx}`}>{FieldComponent({ field })}</div>;
 };
 
-const ChartContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className: string;
-}) => {
-  return <div className={className}>{children}</div>;
-};
-export const DyChart = ({
-  className,
-  chartSchema,
-}: {
-  className: string;
-  chartSchema: any;
-}) => {
+export const DyChart = ({ chartSchema }: { chartSchema: any }) => {
   return (
-    <ChartContainer className={className}>
-      <div>
-        <div>a</div>
-        <div>b</div>
-      </div>
+    <ChartContainer className={chartSchema.className}>
+      {(chartSchema?.fields || []).map((section, index: number) => (
+        <div key={index} className={section.className}>
+          {(section?.fields || []).map((field: any, idx: number) =>
+            renderField(field, idx)
+          )}
+        </div>
+      ))}
     </ChartContainer>
   );
 };

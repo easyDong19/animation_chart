@@ -23,9 +23,7 @@ export const AppRouter = () => {
       <Route path='/bpmtest' element={<TestBPMChart />} />
       <Route path='/experiment' element={<XAxisMovingChart />} />
       <Route path='/experiment2' element={<HeatmapRChart />} />
-      <Route path='/dychart/' element={<Layout />}>
-        <Route index element={<DyChartPage />} />
-      </Route>
+      <Route path='/dychart' element={<DyChartPage />} />
     </Route>
   );
 
