@@ -4,6 +4,7 @@ import { IFieldComponents } from './types/dynamicChart.type';
 import { isArray } from 'lodash';
 import { ChartContainer } from './component/ChartContainer';
 import { Title } from './component/header/Title';
+import { Button } from './component/header/Button';
 // 공통된 요소
 // data, layout, config
 
@@ -11,23 +12,42 @@ import { Title } from './component/header/Title';
  * 헤더 안에 버튼과 제목
  */
 const fieldComponents = {
-  title: ({ field }) => <Title name={field.name} />,
+  title: ({ field }) => <Title field={field} />,
+  button: ({ field }) => <Button field={field} />,
+};
+
+const renderArrayFields = (arrayFields: any[], parentIdx: number) => {
+  const elements: JSX.Element[] = [];
+
+  arrayFields.forEach((row: any[], rowIdx: number) => {
+    row.forEach((field, colIdx: number) => {
+      const FieldComponent = fieldComponents[field.type];
+      if (!FieldComponent) return;
+
+      elements.push(
+        <div key={`${parentIdx}_${rowIdx}_${colIdx}`}>
+          <FieldComponent field={field} />
+        </div>
+      );
+    });
+  });
+
+  return <>{elements}</>;
 };
 
 const renderField = (field: any, idx: number) => {
   if (field.fields && isArray(field.fields)) {
     return (
-      <div
-        key={`nested_${idx}`}
-        className={classNames('w-full', field.className)}
-      ></div>
+      <div key={`nested_${idx}`} className={field.className}>
+        {renderArrayFields(field.fields, idx)}
+      </div>
     );
   }
 
   const FieldComponent = fieldComponents[field.type];
   if (!FieldComponent) return null;
 
-  return <div key={`${field.name}_${idx}`}>{FieldComponent({ field })}</div>;
+  return <>{FieldComponent({ field })}</>;
 };
 
 export const DyChart = ({ chartSchema }: { chartSchema: any }) => {
