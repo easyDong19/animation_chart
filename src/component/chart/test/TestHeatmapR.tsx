@@ -19,6 +19,13 @@ const HeatmapRChart = () => {
   const x = Array.from({ length: size }, (_, i) => i);
   const y = Array.from({ length: size }, (_, i) => i);
 
+  const config = {
+    displayModeBar: false,
+    scrollZoom: false,
+    responsive: true,
+    staticPlot: true,
+  };
+
   const layoutConfig = {
     title: '30x30 Heatmap (Blur Effect)',
     autosize: false,
@@ -73,12 +80,7 @@ const HeatmapRChart = () => {
           },
         ]}
         layout={layoutConfig}
-        config={{
-          displayModeBar: false,
-          scrollZoom: false,
-          responsive: true,
-          staticPlot: true,
-        }}
+        config={config}
       />
     </div>
   );

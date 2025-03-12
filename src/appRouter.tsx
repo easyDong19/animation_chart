@@ -11,7 +11,6 @@ import { TestHeatmap } from './component/chart/test/TestHeatmap';
 import { TestBPMChart } from './component/chart/test/TestBPMChart';
 import XAxisMovingChart from './component/chart/test/TmpTestChart';
 import HeatmapRChart from './component/chart/test/TestHeatmapR';
-import { DyChart } from './component/dyChart/dyChart';
 import DyChartPage from './DyChartPage';
 
 export const AppRouter = () => {

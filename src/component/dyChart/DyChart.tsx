@@ -5,6 +5,7 @@ import { isArray } from 'lodash';
 import { ChartContainer } from './component/ChartContainer';
 import { Title } from './component/header/Title';
 import { Button } from './component/header/Button';
+import { EcgChart } from './chart/components/EcgChart';
 // 공통된 요소
 // data, layout, config
 
@@ -14,6 +15,7 @@ import { Button } from './component/header/Button';
 const fieldComponents = {
   title: ({ field }) => <Title field={field} />,
   button: ({ field }) => <Button field={field} />,
+  ecgChart: ({ field }) => <EcgChart field={field} />,
 };
 
 const renderArrayFields = (arrayFields: any[], parentIdx: number) => {
@@ -47,14 +49,20 @@ const renderField = (field: any, idx: number) => {
   const FieldComponent = fieldComponents[field.type];
   if (!FieldComponent) return null;
 
-  return <>{FieldComponent({ field })}</>;
+  console.log(field);
+
+  return (
+    <React.Fragment key={`nested_${idx}`}>
+      {FieldComponent({ field })}
+    </React.Fragment>
+  );
 };
 
 export const DyChart = ({ chartSchema }: { chartSchema: any }) => {
   return (
     <ChartContainer className={chartSchema.className}>
       {(chartSchema?.fields || []).map((section, index: number) => (
-        <div key={index} className={section.className}>
+        <div key={`${index}`} className={section.className}>
           {(section?.fields || []).map((field: any, idx: number) =>
             renderField(field, idx)
           )}

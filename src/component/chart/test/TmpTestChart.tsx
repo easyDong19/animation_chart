@@ -60,6 +60,8 @@ const XAxisMovingChart = () => {
     isMoving ? 25 : null
   );
 
+  const config = { staticPlot: false, scrollZoom: true };
+
   return (
     <div>
       <button onClick={moveXAxis} className='px-4 py-2 text-white bg-blue-500'>
@@ -94,7 +96,7 @@ const XAxisMovingChart = () => {
           xaxis: { range: xRangeRef.current },
           yaxis: { range: yRangeRef.current },
         }}
-        config={{ staticPlot: false, scrollZoom: true }}
+        config={config}
       />
     </div>
   );
