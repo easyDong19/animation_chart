@@ -1,3 +1,4 @@
+import VectorFieldArrows from './component/dyChart/chart/components/CAMTMPChart';
 import { useEcgChart } from './component/dyChart/chart/hook/useEcgChart';
 import { DyChart } from './component/dyChart/DyChart';
 
@@ -116,6 +117,7 @@ const DyChartPage = () => {
   return (
     <div className='w-5/6 '>
       <DyChart chartSchema={chartSchema} />
+      <VectorFieldArrows />
     </div>
   );
 };
