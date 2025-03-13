@@ -57,7 +57,7 @@ export const DyHeatmapChartPage = () => {
       },
       // 차트 영역
       {
-        className: 'col-span-12',
+        className: 'col-span-6',
         fields: [
           {
             className: 'flex flex-row items-center min-w-0 min-h-0',
@@ -107,7 +107,7 @@ export const DyHeatmapChartPage = () => {
     ],
   };
   return (
-    <div className='w-5/6 '>
+    <div className='w-2/6 '>
       <DyChart chartSchema={HeatMapchartSchema} />
     </div>
   );

@@ -79,6 +79,7 @@ export const useHeatMap = (chartData, size: number) => {
   const updateHeatMap = () => {
     if (plotRef.current && index.current < zData.length - 1) {
       index.current = index.current + 1;
+
       window.Plotly.react(
         plotRef.current.el,
         [
@@ -104,7 +105,7 @@ export const useHeatMap = (chartData, size: number) => {
         updateHeatMap();
       }
     },
-    isUpdate ? 25 : null
+    isUpdate ? 50 : null
   );
 
   return {
