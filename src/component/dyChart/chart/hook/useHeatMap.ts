@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useInterval } from '../../../../util/useInterval';
+import { useAnimationFrame } from '../../../../util/useAnimationFrame';
 
 // ! 히트맵은 인덱스가 달라지는 구조
 // ! 히트맵의 사이즈는 static 값임
@@ -99,13 +100,14 @@ export const useHeatMap = (chartData, size: number) => {
     }
   };
 
-  useInterval(
+  useAnimationFrame(
     () => {
       if (isUpdate) {
         updateHeatMap();
       }
     },
-    isUpdate ? 50 : null
+    isUpdate,
+    0.5
   );
 
   return {

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useInterval } from '../../../../util/useInterval';
+import { useAnimationFrame } from '../../../../util/useAnimationFrame';
 
 export const useEcgChart = (chartData) => {
   const plotRef = useRef<any>(null);
@@ -71,13 +72,14 @@ export const useEcgChart = (chartData) => {
   ];
 
   // 이동 함수
-  useInterval(
+  useAnimationFrame(
     () => {
       if (isMoving) {
         moveXAxis();
       }
     },
-    isMoving ? 25 : null
+    isMoving,
+    0.5
   );
 
   return {
