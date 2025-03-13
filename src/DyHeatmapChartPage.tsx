@@ -1,42 +1,36 @@
-import { useEcgChart } from './component/dyChart/chart/hook/useEcgChart';
+import React from 'react';
+import { useHeatMap } from './component/dyChart/chart/hook/useHeatMap';
 import { DyChart } from './component/dyChart/DyChart';
 
-const generateChartData = () => {
-  const numPoints = 1000;
-  const x = Array.from({ length: numPoints }, (_, i) => i * 2);
-  const y = Array.from(
-    { length: numPoints },
-    () => Math.floor(Math.random() * 40) + 10
+const generateHeatmapData = (size: number, frames: number) => {
+  return Array.from({ length: frames }, () =>
+    Array.from({ length: size }, () =>
+      Array.from({ length: size }, () => Math.random() * 100)
+    )
   );
-  return { x, y };
 };
 
-const chartData = generateChartData();
-
-const DyChartPage = () => {
+export const DyHeatmapChartPage = () => {
   const {
     plotRef,
-    moveXAxis,
-    resetChart,
-    stopMoveXAxis,
+    resetHeatMap,
+    startUpdate,
+    stopUpdate,
     layoutConfig,
     defaultConfig,
     data,
-  } = useEcgChart(chartData);
-
-  //todo 스키마를 만드는 함수를 구현해야하나?
-
-  const chartSchema: any = {
+  } = useHeatMap(generateHeatmapData(30, 500), 30);
+  const HeatMapchartSchema: any = {
     className:
-      'grid grid-cols-12 gap-4 border border-gray-700 p-4 rounded-[0.25rem]',
+      'grid grid-cols-12 gap-4 border border-gray-700 p-4 rounded-[0.25rem] ',
     //헤더영역
     fields: [
       {
-        className: 'col-span-12 flex flex-row justify-between items-center',
+        className: 'col-span-12 flex flex-row justify-between items-center ',
         fields: [
           {
-            className: 'text-lg flex flex-row items-center',
-            name: 'Signal information',
+            className: 'text-lg flex flex-row items-center ',
+            name: 'HeatMap',
             type: 'title',
           },
           {
@@ -68,7 +62,7 @@ const DyChartPage = () => {
           {
             className: 'flex flex-row items-center min-w-0 min-h-0',
             name: 'Signal',
-            type: 'ecgChart',
+            type: 'heatMapChart',
             plotRef: plotRef,
             data: data,
             layoutConfig: layoutConfig,
@@ -89,21 +83,21 @@ const DyChartPage = () => {
                   type: 'button',
                   // 버튼 스타일 기본 값
                   default: true,
-                  clickEvent: moveXAxis,
+                  clickEvent: startUpdate,
                 },
                 {
                   className: '',
                   name: '중지',
                   type: 'button',
                   default: true,
-                  clickEvent: stopMoveXAxis,
+                  clickEvent: stopUpdate,
                 },
                 {
                   className: '',
                   name: '초기화',
                   type: 'button',
                   default: true,
-                  clickEvent: resetChart,
+                  clickEvent: resetHeatMap,
                 },
               ],
             ],
@@ -112,12 +106,9 @@ const DyChartPage = () => {
       },
     ],
   };
-
   return (
     <div className='w-5/6 '>
-      <DyChart chartSchema={chartSchema} />
+      <DyChart chartSchema={HeatMapchartSchema} />
     </div>
   );
 };
-
-export default DyChartPage;

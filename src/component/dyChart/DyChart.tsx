@@ -6,6 +6,7 @@ import { ChartContainer } from './component/ChartContainer';
 import { Title } from './component/header/Title';
 import { Button } from './component/header/Button';
 import { EcgChart } from './chart/components/EcgChart';
+import { HeatMapChart } from './chart/components/HeatMapChart';
 // 공통된 요소
 // data, layout, config
 
@@ -16,6 +17,7 @@ const fieldComponents = {
   title: ({ field }) => <Title field={field} />,
   button: ({ field }) => <Button field={field} />,
   ecgChart: ({ field }) => <EcgChart field={field} />,
+  heatMapChart: ({ field }) => <HeatMapChart field={field} />,
 };
 
 const renderArrayFields = (arrayFields: any[], parentIdx: number) => {

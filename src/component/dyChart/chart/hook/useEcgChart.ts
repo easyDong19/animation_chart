@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import Plot from 'react-plotly.js';
 import { useInterval } from '../../../../util/useInterval';
 
 export const useEcgChart = (chartData) => {
