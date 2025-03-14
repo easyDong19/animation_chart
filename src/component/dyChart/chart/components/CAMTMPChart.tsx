@@ -1,5 +1,6 @@
 import Plot from 'react-plotly.js';
 
+// 삼각
 const VectorFieldArrows = () => {
   const gridSize = 10;
   const spacing = 2;
@@ -75,14 +76,29 @@ const VectorFieldArrows = () => {
       data={[arrowLines, arrowHeads]}
       layout={{
         title: '3D Vector Field with Arrows',
-        width: 800,
-        height: 800,
+        width: 1000,
+        height: 1000,
         scene: {
-          xaxis: { visible: false },
-          yaxis: { visible: false },
-          zaxis: { visible: false },
+          xaxis: {
+            visible: false,
+            showgrid: false,
+            showline: true,
+            zeroline: true,
+            title: 'X Axis',
+          },
+          yaxis: {
+            visible: false,
+            showgrid: false,
+            showline: true,
+            zeroline: true,
+            title: 'Y Axis',
+          },
+          zaxis: {
+            visible: false,
+            showgrid: false,
+          },
           camera: {
-            eye: { x: 0, y: 0, z: 2 },
+            eye: { x: 0, y: 0, z: -1.5 },
           },
         },
         showlegend: false,
