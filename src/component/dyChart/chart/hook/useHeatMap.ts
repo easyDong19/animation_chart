@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useInterval } from '../../../../util/useInterval';
 import { useAnimationFrame } from '../../../../util/useAnimationFrame';
 
 // ! 히트맵은 인덱스가 달라지는 구조
