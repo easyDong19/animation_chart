@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@mars3d/heatmap.js": "^2.0.7",
+    "@react-three/fiber": "^9.1.0",
     "@types/plotly.js": "^2.35.2",
     "@types/seedrandom": "^3.0.8",
+    "@types/three": "^0.174.0",
     "chart.js": "^4.4.7",
     "chartjs-plugin-zoom": "^2.2.0",
     "classnames": "^2.5.1",
@@ -24,7 +26,8 @@
     "react-dom": "^18.3.1",
     "react-plotly.js": "^2.6.0",
     "react-router-dom": "^7.1.5",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
