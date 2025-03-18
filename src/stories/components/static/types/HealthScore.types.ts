@@ -1,4 +1,5 @@
 export interface HealthScoreProps {
+  /** 예시1 */
   value: number;
   prevValue?: number | null;
   threshold: [number, number];

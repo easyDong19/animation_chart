@@ -7,11 +7,18 @@ const meta = {
   component: HealthScore,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: '건강 점수를 시각화하는 게이지 차트 컴포넌트 \n\n',
+      },
+    },
   },
+
   tags: ['autodocs'],
 } satisfies Meta<typeof HealthScore>;
 
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 
 const defaultChartStyle: ChartStyleType = {

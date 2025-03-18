@@ -21,6 +21,12 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
+    /*jsdocs*/
+    "declaration": true,
+    "declarationMap": true, // ✅ 타입 정보 맵 생성 (도움이 될 수 있음)
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
     /* alias */
     "baseUrl": "src",
     "paths": {

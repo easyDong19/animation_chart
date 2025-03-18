@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import { StorybookConfig } from '@storybook/react-vite';
 import path from 'path';
 const config: StorybookConfig = {
   core: {
@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     {
       name: '@storybook/addon-essentials',
       options: {
-        docs: false,
+        docs: true,
       },
     },
     '@storybook/addon-onboarding',
@@ -29,6 +29,13 @@ const config: StorybookConfig = {
     config.resolve.alias['@'] = path.resolve(__dirname, '../src');
 
     return config;
+  },
+
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      tsconfigPath: './tsconfig.app.json', // 👈 This solves your problem.
+    },
   },
 
   framework: {

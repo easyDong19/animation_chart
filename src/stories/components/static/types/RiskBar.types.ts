@@ -1,10 +1,11 @@
-export interface RiskBarProps {
+export type RiskBarProps = {
+  /** 예시1 */
   riskData: RiskDataType[];
   range: [number, number];
   tickStep: number;
   threshold: [number, number];
   chartStyle: ChartStyleType;
-}
+};
 
 export type RiskDataType = {
   label: string;
