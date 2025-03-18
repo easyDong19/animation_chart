@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { useInterval } from '../../../../util/useInterval';
 import { useAnimationFrame } from '../../../../util/useAnimationFrame';
 
 export const useEcgChart = (chartData) => {
