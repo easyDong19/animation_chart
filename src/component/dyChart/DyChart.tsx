@@ -1,6 +1,4 @@
-import classNames from 'classnames';
 import React from 'react';
-import { IFieldComponents } from './types/dynamicChart.type';
 import { isArray } from 'lodash';
 import { ChartContainer } from './component/ChartContainer';
 import { Title } from './component/header/Title';
@@ -14,10 +12,10 @@ import { HeatMapChart } from './chart/components/HeatMapChart';
  * 헤더 안에 버튼과 제목
  */
 const fieldComponents = {
-  title: ({ field }) => <Title field={field} />,
-  button: ({ field }) => <Button field={field} />,
-  ecgChart: ({ field }) => <EcgChart field={field} />,
-  heatMapChart: ({ field }) => <HeatMapChart field={field} />,
+  title: Title,
+  button: Button,
+  ecgChart: EcgChart,
+  heatMapChart: HeatMapChart,
 };
 
 const renderArrayFields = (arrayFields: any[], parentIdx: number) => {

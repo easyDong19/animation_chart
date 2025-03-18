@@ -12,7 +12,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs`'],
+  tags: ['autodocs'],
 } satisfies Meta<typeof RiskBar>;
 
 export default meta;
