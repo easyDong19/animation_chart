@@ -1,5 +1,5 @@
+import { useAnimationFrame } from '@/util/useAnimationFrame';
 import { useRef, useState } from 'react';
-import { useAnimationFrame } from '../../../../util/useAnimationFrame';
 
 // ! 히트맵은 인덱스가 달라지는 구조
 // ! 히트맵의 사이즈는 static 값임
