@@ -34,5 +34,5 @@ export type ChartStyleType = {
     t: number;
     b: number;
   };
-  threshold: [string, string];
+  threshold: [string, string, string];
 };

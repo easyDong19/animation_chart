@@ -2,18 +2,14 @@ import { RiskBar } from '@/stories/components/static/RiskBar';
 import {
   ChartStyleType,
   RiskDataType,
-} from '@/stories/components/static/RiskBarType';
+} from '@/stories/components/static/types/RiskBar.types';
+
 import { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Static/RiskBar',
   component: RiskBar,
   parameters: {
-    docs: {
-      description: {
-        component: '이 차트는 Static입니다',
-      },
-    },
     layout: 'centered',
   },
   tags: ['autodocs`'],
@@ -55,10 +51,10 @@ const defaultChartStyle: ChartStyleType = {
     color: '#E5E7EB',
   },
   margin: { l: 100, r: 20, t: 0, b: 50 },
-  threshold: ['#2563EB', '#0D9488'],
+  threshold: ['#2563EB', '#0D9488', '#B91C1C'],
 };
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {
     riskData: defaultRiskData,
     range: [0, 100],
