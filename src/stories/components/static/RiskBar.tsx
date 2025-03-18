@@ -1,44 +1,10 @@
+import {
+  ChartStyleType,
+  RiskBarProps,
+  RiskDataType,
+} from '@/stories/components/static/RiskBarType';
 import Plot from 'react-plotly.js';
 
-export interface RiskBarProps {
-  riskData: RiskDataType[];
-  range: [number, number];
-  tickStep: number;
-  threshold: [number, number];
-  chartStyle: ChartStyleType;
-}
-
-export type RiskDataType = {
-  label: string;
-  value: number;
-};
-
-export type ChartStyleType = {
-  title: {
-    size: number;
-    color: string;
-  };
-  number: {
-    size: number;
-    color: string;
-    weight: number;
-  };
-  tickfont: {
-    size: number;
-    color: string;
-  };
-  step: {
-    color: string;
-  };
-  margin: {
-    l: number;
-    r: number;
-    t: number;
-    b: number;
-  };
-};
-
-// todo : 스타일은 한번에 객체로 담아서 props로 받는게 나아 보임
 const defaultChartStyle: ChartStyleType = {
   title: {
     size: 18,
@@ -57,6 +23,7 @@ const defaultChartStyle: ChartStyleType = {
     color: '#E5E7EB',
   },
   margin: { l: 100, r: 20, t: 0, b: 50 },
+  threshold: ['#2563EB', '#0D9488'],
 };
 
 const defaultRiskData: RiskDataType[] = [
@@ -82,12 +49,12 @@ export const RiskBar = ({
   chartStyle = defaultChartStyle,
 }: RiskBarProps) => {
   const getBarColor = (value: number) => {
-    if (value <= threshold[0]) return '#2563EB';
-    if (value <= threshold[1]) return '#0D9488';
+    if (value <= threshold[0]) return chartStyle.threshold[0];
+    if (value <= threshold[1]) return chartStyle.threshold[1];
     return '#B91C1C';
   };
 
-  const makeTickVals = (start, end, step) => {
+  const makeTickVals = (start: number, end: number, step: number) => {
     return Array.from(
       { length: Math.floor((end - start) / step) + 1 },
       (_, i) => start + i * step
