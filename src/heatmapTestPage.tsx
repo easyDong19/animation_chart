@@ -1,4 +1,3 @@
-import React from 'react';
 import xy_mag from '@/data/current_xy_mag.json';
 import bz_data from '@/data/bzData.json';
 import raw_data from '@/data/feature_data_Rounding.json';
@@ -14,7 +13,7 @@ const generateHeatmapData = (size: number, series_length: number) => {
   }
   return [data];
 };
-export const CAMChartPage = () => {
+export const HeatmapTestPage = () => {
   console.log(xy_mag);
   console.log(bz_data);
   console.log(raw_data);
