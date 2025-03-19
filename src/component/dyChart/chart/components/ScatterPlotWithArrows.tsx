@@ -1,16 +1,21 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
+const makeDegreeToRad = (degree: number) => {
+  return (Math.PI / 180) * degree;
+};
+
 const ScatterPlotWithArrows = () => {
-  // 점의 시작 위치 (출발점)
-  const xStart = [1, 2, 3];
-  const yStart = [1, 2, 3];
+  const xStart = [1, 2];
+  const yStart = [1, 2];
 
-  // 화살표의 끝 위치 (도착점)
-  const xEnd = [1.5, 2.5, 3.5];
-  const yEnd = [1.5, 2.5, 3.5];
+  let degrees = [135, -45];
+  const mag = [0.2, 0.1];
+  degrees = degrees.map((degree) => makeDegreeToRad(degree));
 
-  // Scatter plot 데이터 (파란색 점)
+  const xEnd = xStart.map((x, i) => x + mag[i] * Math.cos(degrees[i]));
+  const yEnd = yStart.map((y, i) => y + mag[i] * Math.sin(degrees[i]));
+
   const scatterData = {
     x: xStart,
     y: yStart,
@@ -20,29 +25,27 @@ const ScatterPlotWithArrows = () => {
     name: 'Points',
   };
 
-  // 화살표를 추가하는 annotations 배열 생성
-  const annotations = xStart.map((x, i) => ({
-    x: xEnd[i], // 화살표 끝점 X
-    y: yEnd[i], // 화살표 끝점 Y
-    ax: xStart[i], // 화살표 시작점 X
-    ay: yStart[i], // 화살표 시작점 Y
+  const annotations = xStart.map((_, i) => ({
+    x: xEnd[i],
+    y: yEnd[i],
+    ax: xStart[i],
+    ay: yStart[i],
     xref: 'x',
     yref: 'y',
     axref: 'x',
     ayref: 'y',
     showarrow: true,
-    arrowhead: 3, // 화살표 스타일 (1~5)
-    arrowsize: 2, // 화살표 크기
-    arrowwidth: 2, // 화살표 두께
+    arrowhead: 3,
+    arrowsize: 2,
+    arrowwidth: 2,
     arrowcolor: 'red',
   }));
 
-  // 레이아웃 설정 (grid 없애기)
   const layout = {
     title: '2D Scatter Plot with Arrows',
     xaxis: { title: 'X Axis', showgrid: false },
     yaxis: { title: 'Y Axis', showgrid: false },
-    annotations: annotations, // 화살표 추가
+    annotations: annotations,
   };
 
   return <Plot data={[scatterData]} layout={layout} />;
