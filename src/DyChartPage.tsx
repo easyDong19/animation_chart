@@ -1,17 +1,20 @@
+import VectorFieldArrows from '@/component/dyChart/chart/components/CAMTMPChart';
 import { useEcgChart } from './component/dyChart/chart/hook/useEcgChart';
 import { DyChart } from './component/dyChart/DyChart';
+import ecgData from '@/data/ecgData.json';
 
-const generateChartData = () => {
-  const numPoints = 1000;
-  const x = Array.from({ length: numPoints }, (_, i) => i * 2);
-  const y = Array.from(
-    { length: numPoints },
-    () => Math.floor(Math.random() * 40) + 10
-  );
+const JsonToChartData = (ecgData) => {
+  const x = [];
+  const y = [];
+  ecgData.map((item, idx) => {
+    x.push(item.x);
+    y.push(item.y * 10000);
+  });
+
   return { x, y };
 };
 
-const chartData = generateChartData();
+const ecgChartData = JsonToChartData(ecgData);
 
 const DyChartPage = () => {
   const {
@@ -22,14 +25,12 @@ const DyChartPage = () => {
     layoutConfig,
     defaultConfig,
     data,
-  } = useEcgChart(chartData);
-
-  //todo 스키마를 만드는 함수를 구현해야하나?
+  } = useEcgChart(ecgChartData);
 
   const chartSchema: any = {
     className:
       'grid grid-cols-12 gap-4 border border-gray-700 p-4 rounded-[0.25rem]',
-    //헤더영역
+
     fields: [
       {
         className: 'col-span-12 flex flex-row justify-between items-center',
@@ -47,7 +48,7 @@ const DyChartPage = () => {
                   className: '',
                   name: '인쇄',
                   type: 'button',
-                  // 버튼 스타일 기본 값
+
                   default: true,
                 },
                 {
@@ -61,7 +62,7 @@ const DyChartPage = () => {
           },
         ],
       },
-      // 차트 영역
+
       {
         className: 'col-span-12',
         fields: [
@@ -87,7 +88,7 @@ const DyChartPage = () => {
                   className: '',
                   name: '시작',
                   type: 'button',
-                  // 버튼 스타일 기본 값
+
                   default: true,
                   clickEvent: moveXAxis,
                 },
@@ -112,10 +113,26 @@ const DyChartPage = () => {
       },
     ],
   };
+  const generateRandomVectors = (count: number, length: number = 1) => {
+    return Array.from({ length: count }, () => {
+      const angle = Math.random() * Math.PI * 2;
+      return {
+        x: Math.random() * 10 - 5,
+        y: Math.random() * 10 - 5,
+        z: 0,
+        ux: Math.cos(angle) * length,
+        vy: Math.sin(angle) * length,
+        wz: Math.sin(angle) * length,
+      };
+    });
+  };
 
   return (
     <div className='w-5/6 '>
       <DyChart chartSchema={chartSchema} />
+      <div>
+        <VectorFieldArrows />
+      </div>
     </div>
   );
 };

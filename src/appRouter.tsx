@@ -11,6 +11,8 @@ import XAxisMovingChart from './component/chart/test/TmpTestChart';
 import HeatmapRChart from './component/chart/test/TestHeatmapR';
 import DyChartPage from './DyChartPage';
 import { DyHeatmapChartPage } from './DyHeatmapChartPage';
+import { CocurrentChartPage } from '@/CocurrentChartPage';
+import { CAMChartPage } from '@/CAMChartPage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -21,6 +23,8 @@ export const AppRouter = () => {
       <Route path='/experiment2' element={<HeatmapRChart />} />
       <Route path='/dychart' element={<DyChartPage />} />
       <Route path='/dyheatmap' element={<DyHeatmapChartPage />} />
+      <Route path='/cocurrent' element={<CocurrentChartPage />} />
+      <Route path='camchart' element={<CAMChartPage />} />
     </Route>
   );
 

@@ -106,6 +106,7 @@ export const DyHeatmapChartPage = () => {
       },
     ],
   };
+
   return (
     <div className='w-2/6 '>
       <DyChart chartSchema={HeatMapchartSchema} />

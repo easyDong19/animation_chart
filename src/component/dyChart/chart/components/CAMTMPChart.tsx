@@ -13,7 +13,7 @@ const VectorFieldArrows = () => {
     x: [],
     y: [],
     z: [],
-    line: { color: 'black', width: 15 },
+    line: { color: 'black', width: 3 },
   };
 
   const arrowHeads = {
@@ -34,7 +34,7 @@ const VectorFieldArrows = () => {
     for (let j = 0; j < gridSize; j++) {
       const x0 = i * spacing;
       const y0 = j * spacing;
-      const z0 = 3;
+      const z0 = 1;
 
       const angle = Math.sin(i * 0.5) * Math.cos(j * 0.5) * Math.PI;
       const ux = Math.cos(angle) * arrowScale;
@@ -48,6 +48,8 @@ const VectorFieldArrows = () => {
       arrowLines.x.push(x0, x1, null);
       arrowLines.y.push(y0, y1, null);
       arrowLines.z.push(z0, z1, null);
+
+      console.log(arrowLines);
 
       const anglePerp = angle + Math.PI / 2;
       const ax = x1 - Math.cos(anglePerp) * arrowHeadSize;

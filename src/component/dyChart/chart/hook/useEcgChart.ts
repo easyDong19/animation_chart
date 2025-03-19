@@ -5,8 +5,8 @@ export const useEcgChart = (chartData) => {
   const plotRef = useRef<any>(null);
   const [isMoving, setIsMoving] = useState(false);
 
-  const initialXRange = useRef<[number, number]>([0, 10]);
-  const initialYRange = useRef<[number, number]>([0, 50]);
+  const initialXRange = useRef<[number, number]>([0, 500]);
+  const initialYRange = useRef<[number, number]>([0, 600]);
 
   const xRangeRef = useRef<[number, number]>([...initialXRange.current]);
   const yRangeRef = useRef<[number, number]>([...initialYRange.current]);
@@ -16,6 +16,7 @@ export const useEcgChart = (chartData) => {
     setIsMoving(true);
     if (plotRef.current) {
       xRangeRef.current = [
+        // 여기부분 수정해서 속도 조절 가능하게 해야함
         xRangeRef.current[0] + 0.5,
         xRangeRef.current[1] + 0.5,
       ];
@@ -78,7 +79,7 @@ export const useEcgChart = (chartData) => {
       }
     },
     isMoving,
-    0.5
+    1
   );
 
   return {

@@ -43,8 +43,8 @@ export const useHeatMap = (chartData, size: number) => {
       type: 'heatmap',
       colorscale: 'Jet',
       zsmooth: 'best',
-      zmin: 0,
-      zmax: 100,
+      zmin: Math.min(zData[index.current]),
+      zmax: Math.max(zData[index.current]),
     },
   ];
 

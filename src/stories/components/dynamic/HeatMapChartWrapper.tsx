@@ -1,6 +1,5 @@
 import { HeatMapChart } from '@/component/dyChart/chart/components/HeatMapChart';
 import { useHeatMap } from '@/component/dyChart/chart/hook/useHeatMap';
-import { useMemo } from 'react';
 
 const generateHeatmapData = (size: number, frames: number) => {
   return Array.from({ length: frames }, () =>
@@ -13,6 +12,7 @@ const generateHeatmapData = (size: number, frames: number) => {
 export const HeatMapChartWrapper = () => {
   const raw_data = generateHeatmapData(30, 500);
 
+  console.log(raw_data);
   const {
     plotRef,
     resetHeatMap,
