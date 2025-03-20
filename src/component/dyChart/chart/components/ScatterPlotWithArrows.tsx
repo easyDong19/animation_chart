@@ -4,6 +4,7 @@ import raw_data from '@/data/feature_data_Rounding.json';
 const makeDegreeToRad = (degree: number) => {
   return (Math.PI / 180) * degree;
 };
+const index = 100;
 
 const generateCamData = (size: number, series_length: number) => {
   // 초기 좌표 만들기
@@ -16,9 +17,10 @@ const generateCamData = (size: number, series_length: number) => {
       yStart.push(j);
     }
   }
+  console.log(xStart);
+  console.log(yStart);
 
   //JSON 데이터 가져오기
-  // todo : 자기장 세기 정규화
   const totalMagData = [];
   const totalDegreeData = [];
   for (let s = 0; s < series_length; s++) {
@@ -38,14 +40,14 @@ const generateCamData = (size: number, series_length: number) => {
 
   // 화살표 크기 정규화
   const xEnd = xStart.map((x, i) => {
-    let magnitude = totalMagData[0][i] * 100;
-    magnitude = Math.min(Math.max(magnitude, 0.4), 1);
+    let magnitude = totalMagData[index][i] * 100;
+    magnitude = Math.min(Math.max(magnitude, 0.6), 1);
     return x + magnitude * Math.cos(totalDegreeData[0][i]);
   });
 
   const yEnd = yStart.map((y, i) => {
-    let magnitude = totalMagData[0][i] * 100;
-    magnitude = Math.min(Math.max(magnitude, 0.4), 1);
+    let magnitude = totalMagData[index][i] * 100;
+    magnitude = Math.min(Math.max(magnitude, 0.6), 1);
     return y + magnitude * Math.sin(totalDegreeData[0][i]);
   });
 
@@ -75,8 +77,8 @@ const ScatterPlotWithArrows = () => {
     ayref: 'y',
     showarrow: true,
     arrowhead: 2, // arrowHead 모양
-    arrowsize: Math.min(Math.max(totalMagData[0][i] * 100, 0.8), 1.5),
-    arrowwidth: Math.min(Math.max(totalMagData[0][i] * 100, 1), 1.5),
+    arrowsize: Math.min(Math.max(totalMagData[index][i] * 100, 0.8), 1.5),
+    arrowwidth: Math.min(Math.max(totalMagData[index][i] * 100, 1), 1.5),
     arrowcolor: 'black',
   }));
 

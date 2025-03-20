@@ -14,6 +14,7 @@ import { DyHeatmapChartPage } from './DyHeatmapChartPage';
 import { CocurrentChartPage } from '@/CocurrentChartPage';
 import { HeatmapTestPage } from '@/heatmapTestPage';
 import { CamChartTestPage } from '@/CamChartTestPage';
+import { RealCamTestPage } from '@/RealCamTestPage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -27,6 +28,7 @@ export const AppRouter = () => {
       <Route path='/cocurrent' element={<CocurrentChartPage />} />
       <Route path='/realheatmap' element={<HeatmapTestPage />} />
       <Route path='/cam' element={<CamChartTestPage />} />
+      <Route path='/realcam' element={<RealCamTestPage />} />
     </Route>
   );
 
