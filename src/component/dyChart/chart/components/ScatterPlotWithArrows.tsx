@@ -23,22 +23,27 @@ const generateCamData = (size: number) => {
   let degreeData = [];
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      magData.push(raw_data[i]['current_xy_mag'][j][5]);
-      degreeData.push(raw_data[i]['current_xy_degree'][j][5]);
+      magData.push(raw_data[i]['current_xy_mag'][j][400]);
+      degreeData.push(raw_data[i]['current_xy_degree'][j][400]);
     }
   }
   //degree => Rad로 변환
   degreeData = degreeData.map((degree) => makeDegreeToRad(degree));
 
   console.log(magData);
-  console.log(degreeData);
 
-  const xEnd = xStart.map(
-    (x, i) => x + magData[i] * 100 * Math.cos(degreeData[i])
-  );
-  const yEnd = yStart.map(
-    (y, i) => y + magData[i] * 100 * Math.sin(degreeData[i])
-  );
+  // 화살표 크기 정규화
+  const xEnd = xStart.map((x, i) => {
+    let magnitude = magData[i] * 100;
+    magnitude = Math.min(Math.max(magnitude, 0.4), 1);
+    return x + magnitude * Math.cos(degreeData[i]);
+  });
+
+  const yEnd = yStart.map((y, i) => {
+    let magnitude = magData[i] * 100;
+    magnitude = Math.min(Math.max(magnitude, 0.4), 1);
+    return y + magnitude * Math.sin(degreeData[i]);
+  });
 
   return { xStart, yStart, xEnd, yEnd, magData };
 };
@@ -65,9 +70,9 @@ const ScatterPlotWithArrows = () => {
     axref: 'x',
     ayref: 'y',
     showarrow: true,
-    arrowhead: magData[i],
-    arrowsize: magData[i],
-    arrowwidth: magData[i],
+    arrowhead: 2, // arrowHead 모양
+    arrowsize: Math.min(Math.max(magData[i] * 100, 1.2), 1.5),
+    arrowwidth: Math.min(Math.max(magData[i] * 100, 1.2), 2),
     arrowcolor: 'black',
   }));
 
