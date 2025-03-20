@@ -103,7 +103,6 @@ export const useHeatMap = (chartData, size: number) => {
     () => {
       if (isUpdate) {
         updateHeatMap();
-        console.log(index.current);
       }
     },
     isUpdate,

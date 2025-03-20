@@ -1,19 +1,15 @@
 import { useRef, useState } from 'react';
 import raw_data from '@/data/feature_data_Rounding.json';
+import { useAnimationFrame } from '@/util/useAnimationFrame';
 
 const makeDegreeToRad = (degree: number) => {
   return (Math.PI / 180) * degree;
 };
-// 화살표 끝점 로직 분리
 
 const generateCamData = (rawData, size: number, series_length) => {
-  // 초기 좌표 만들기
   const xStart = [];
   const yStart = [];
-
-  // 끝점 배열
-  const xEndArray = [];
-  const yEndArray = [];
+  const annotationsArray = [];
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
@@ -21,44 +17,45 @@ const generateCamData = (rawData, size: number, series_length) => {
       yStart.push(j);
     }
   }
-  //JSON 데이터 가져오기
-  const totalMagData = [];
-  const totalDegreeData = [];
+
   for (let s = 0; s < series_length; s++) {
     const magData = [];
     let degreeData = [];
+
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
         magData.push(rawData[i]['current_xy_mag'][j][s]);
         degreeData.push(rawData[i]['current_xy_degree'][j][s]);
       }
     }
-    //degree => Rad로 변환
+
     degreeData = degreeData.map((degree) => makeDegreeToRad(degree));
-    totalMagData.push(magData);
-    totalDegreeData.push(degreeData);
-  }
 
-  console.log(totalMagData);
-
-  for (let s = 0; s < series_length; s++) {
-    const xEnd = xStart.map((x, i) => {
-      let magnitude = totalMagData[s][i] * 100;
+    const annotations = xStart.map((_, i) => {
+      let magnitude = magData[i] * 100;
       magnitude = Math.min(Math.max(magnitude, 0.6), 1);
-      return x + magnitude * Math.cos(totalDegreeData[s][i]);
+
+      return {
+        x: xStart[i] + magnitude * Math.cos(degreeData[i]),
+        y: yStart[i] + magnitude * Math.sin(degreeData[i]),
+        ax: xStart[i],
+        ay: yStart[i],
+        xref: 'x',
+        yref: 'y',
+        axref: 'x',
+        ayref: 'y',
+        showarrow: true,
+        arrowhead: 2,
+        arrowsize: Math.min(Math.max(magData[i] * 100, 0.8), 1.5),
+        arrowwidth: Math.min(Math.max(magData[i] * 100, 1), 1.5),
+        arrowcolor: 'black',
+      };
     });
 
-    const yEnd = yStart.map((y, i) => {
-      let magnitude = totalMagData[s][i] * 100;
-      magnitude = Math.min(Math.max(magnitude, 0.6), 1);
-      return y + magnitude * Math.sin(totalDegreeData[s][i]);
-    });
-
-    xEndArray.push(xEnd);
-    yEndArray.push(yEnd);
+    annotationsArray.push(annotations);
   }
 
-  return { xStart, yStart, xEndArray, yEndArray, totalMagData };
+  return { xStart, yStart, annotationsArray };
 };
 
 export const useCamChart = (rawData, size: number, series_length: number) => {
@@ -66,12 +63,11 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
   const index = useRef<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
 
-  /**
-   * todo: series_length 하드코딩한 이유는 아직 데이터 형식이나 정해진 길이가 없기에
-   * todo: 나중에 기획이 픽스되면 수정할 예정
-   */
-  const { xStart, yStart, xEndArray, yEndArray, totalMagData } =
-    generateCamData(raw_data, size, series_length);
+  const { xStart, yStart, annotationsArray } = generateCamData(
+    raw_data,
+    size,
+    series_length
+  );
 
   const data = {
     x: xStart,
@@ -82,33 +78,11 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     name: 'Points',
   };
 
-  const annotations = xStart.map((_, i) => ({
-    x: xEndArray[index.current][i],
-    y: yEndArray[index.current][i],
-    ax: xStart[i],
-    ay: yStart[i],
-    xref: 'x',
-    yref: 'y',
-    axref: 'x',
-    ayref: 'y',
-    showarrow: true,
-    arrowhead: 2, // arrowHead 모양
-    arrowsize: Math.min(
-      Math.max(totalMagData[index.current][i] * 100, 0.8),
-      1.5
-    ),
-    arrowwidth: Math.min(
-      Math.max(totalMagData[index.current][i] * 100, 1),
-      1.5
-    ),
-    arrowcolor: 'black',
-  }));
-
   const layoutConfig = {
     title: '2D Scatter Plot with Arrows',
     xaxis: { visible: false, showgrid: false },
     yaxis: { visible: false, showgrid: false },
-    annotations: annotations,
+    annotations: annotationsArray[0],
     shapes: [],
   };
 
@@ -119,5 +93,35 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     staticPlot: true,
   };
 
-  return { plotRef, data, layoutConfig, defaultConfig };
+  const updateCamChart = () => {
+    if (plotRef.current && index.current < annotationsArray.length - 1) {
+      index.current += 1;
+      console.log(index.current);
+
+      // 기존 layoutConfig 복사 후 annotations만 업데이트
+      const newLayout = {
+        ...layoutConfig,
+        annotations: annotationsArray[index.current],
+      };
+
+      // react()를 사용하여 차트 업데이트
+      window.Plotly.react(plotRef.current.el, [data], newLayout);
+    }
+  };
+
+  const startUpdate = () => {
+    setIsUpdate(true);
+  };
+
+  useAnimationFrame(
+    () => {
+      if (isUpdate) {
+        updateCamChart();
+      }
+    },
+    isUpdate,
+    25
+  );
+
+  return { plotRef, data, layoutConfig, defaultConfig, startUpdate };
 };
