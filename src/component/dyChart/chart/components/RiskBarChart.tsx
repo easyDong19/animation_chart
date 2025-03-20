@@ -29,6 +29,7 @@ const RiskBarChart = () => {
                 },
                 bar: { color: getBarColor(risk.value), thickness: 1.0 },
                 borderwidth: 0,
+                // 배경색
                 steps: [{ range: [0, 100], color: '#E5E7EB' }],
               },
               domain: { x: [0, 1], y: [0, 0.2] },

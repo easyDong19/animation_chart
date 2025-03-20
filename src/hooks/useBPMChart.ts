@@ -55,4 +55,5 @@ const useBPMChart = (initState: ChartInitialState, data: InitDataState) => {
     BPMData,
   };
 };
+
 export default useBPMChart;

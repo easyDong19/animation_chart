@@ -1,7 +1,25 @@
 import Plot from 'react-plotly.js';
+import raw_data from '@/data/feature_data_Rounding.json';
 
-// 삼각
+const makeDegreeToRad = (degree: number) => {
+  return (Math.PI / 180) * degree;
+};
+
+const generateCamChartData = (size: number) => {
+  const mag_data = [];
+  let degree_data = [];
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      mag_data.push(raw_data[i]['current_xy_mag'][j][0]);
+      degree_data.push(raw_data[i]['current_xy_degree'][j][0]);
+    }
+  }
+  degree_data = degree_data.map((degree) => makeDegreeToRad(degree));
+
+  return { mag_data, degree_data };
+};
 const VectorFieldArrows = () => {
+  const { mag_data, degree_data } = generateCamChartData(21);
   const gridSize = 10;
   const spacing = 2;
   const arrowScale = 1.5;
@@ -13,7 +31,7 @@ const VectorFieldArrows = () => {
     x: [],
     y: [],
     z: [],
-    line: { color: 'black', width: 15 },
+    line: { color: 'black', width: 3 },
   };
 
   const arrowHeads = {
@@ -34,7 +52,7 @@ const VectorFieldArrows = () => {
     for (let j = 0; j < gridSize; j++) {
       const x0 = i * spacing;
       const y0 = j * spacing;
-      const z0 = 3;
+      const z0 = 1;
 
       const angle = Math.sin(i * 0.5) * Math.cos(j * 0.5) * Math.PI;
       const ux = Math.cos(angle) * arrowScale;

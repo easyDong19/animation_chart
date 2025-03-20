@@ -10,11 +10,18 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    // "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    // "noEmit": true,
     "jsx": "react-jsx",
+
+    // storybook
+    "noEmit": false, // ✅ Storybook이 타입 정보를 읽을 수 있도록 false로 변경
+    "declaration": true, // ✅ 타입 선언 파일(.d.ts) 생성
+    "declarationMap": true, // ✅ 타입 정보 맵 생성 (도움이 될 수 있음)
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
 
     /* Linting */
     "strict": true,
