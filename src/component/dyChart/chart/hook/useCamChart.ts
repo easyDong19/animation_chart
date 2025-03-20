@@ -160,7 +160,12 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
 
     console.log(initLayout);
     console.log(index.current);
-    window.Plotly.react(plotRef.current.el, [data], initLayout);
+    // window.Plotly.react(plotRef.current.el, [data], initLayout);
+    const newLayout = {
+      annotations: annotationsArray[index.current], // 새로운 화살표 데이터로 덮어쓰기
+    };
+
+    window.Plotly.relayout(plotRef.current.el, newLayout);
     progressRef.current.value = 0;
   };
 
@@ -178,7 +183,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     if (isUpdate) {
       updateCamChart();
     }
-  }, 1000 / timeFactor);
+  }, 200 / timeFactor);
 
   return {
     plotRef,
