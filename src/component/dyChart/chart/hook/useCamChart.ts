@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import raw_data from '@/data/feature_data_Rounding.json';
 import { useAnimationFrame } from '@/util/useAnimationFrame';
 
@@ -61,6 +61,11 @@ const generateCamData = (rawData, size: number, series_length) => {
 export const useCamChart = (rawData, size: number, series_length: number) => {
   const plotRef = useRef<any>(null);
   const index = useRef<number>(0);
+  // todo : ref로 직접 dom 건드려서 frame/남은 frame text 넣어줘야함
+  const [timeFactor, setTimeFactor] = useState<number>(1);
+
+  const progressRef = useRef<HTMLProgressElement>(null);
+
   const [isUpdate, setIsUpdate] = useState(false);
 
   const { xStart, yStart, annotationsArray } = generateCamData(
@@ -105,6 +110,14 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
 
       // react()를 사용하여 차트 업데이트
       window.Plotly.react(plotRef.current.el, [data], newLayout);
+
+      // 재생 바 업데이트 (DOM 직접 조작)
+      if (progressRef.current) {
+        progressRef.current.value =
+          (index.current / (annotationsArray.length - 1)) * 100;
+      }
+    } else {
+      stopUpdate();
     }
   };
 
@@ -116,8 +129,26 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     setIsUpdate(false);
   };
 
+  const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newIndex = Math.round(
+      (parseFloat(event.target.value) / 100) * (annotationsArray.length - 1)
+    );
+    index.current = newIndex;
+
+    const newLayout = {
+      annotations: annotationsArray[newIndex],
+    };
+
+    window.Plotly.relayout(plotRef.current.el, newLayout);
+  };
+
+  const changeSpeed = (speedFactor: number) => {
+    setTimeFactor(() => speedFactor);
+    console.log('클릭됨?');
+    console.log(timeFactor);
+  };
+
   const resetCamChart = () => {
-    console.log('눌린거 맞아?>');
     index.current = 0;
 
     const initLayout = {
@@ -128,6 +159,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     console.log(initLayout);
     console.log(index.current);
     window.Plotly.react(plotRef.current.el, [data], initLayout);
+    progressRef.current.value = 0;
   };
 
   useAnimationFrame(
@@ -137,7 +169,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
       }
     },
     isUpdate,
-    25
+    timeFactor
   );
 
   return {
@@ -148,5 +180,8 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     startUpdate,
     stopUpdate,
     resetCamChart,
+    progressRef,
+    changeSpeed,
+    handleProgressChange,
   };
 };

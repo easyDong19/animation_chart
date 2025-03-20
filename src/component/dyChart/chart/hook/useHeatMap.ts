@@ -12,6 +12,7 @@ export const useHeatMap = (chartData, size: number) => {
   const plotRef = useRef<any>(null);
   const index = useRef<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [timeFactor, setTimeFactor] = useState<number>(1);
 
   const x = Array.from({ length: size }, (_, i) => i);
   const y = Array.from({ length: size }, (_, i) => i);
@@ -72,6 +73,9 @@ export const useHeatMap = (chartData, size: number) => {
     );
   };
 
+  const changeSpeed = (speedFactor: number) => {
+    setTimeFactor(speedFactor);
+  };
   const startUpdate = () => {
     setIsUpdate(true);
   };
@@ -106,7 +110,7 @@ export const useHeatMap = (chartData, size: number) => {
       }
     },
     isUpdate,
-    25
+    timeFactor
   );
 
   return {
@@ -116,6 +120,7 @@ export const useHeatMap = (chartData, size: number) => {
     stopUpdate,
     layoutConfig,
     defaultConfig,
+    changeSpeed,
     data,
   };
 };
