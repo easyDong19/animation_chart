@@ -82,7 +82,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     title: '2D Scatter Plot with Arrows',
     xaxis: { visible: false, showgrid: false },
     yaxis: { visible: false, showgrid: false },
-    annotations: annotationsArray[0],
+    annotations: annotationsArray[index.current],
     shapes: [],
   };
 
@@ -98,7 +98,6 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
       index.current += 1;
       console.log(index.current);
 
-      // 기존 layoutConfig 복사 후 annotations만 업데이트
       const newLayout = {
         ...layoutConfig,
         annotations: annotationsArray[index.current],
@@ -113,6 +112,24 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     setIsUpdate(true);
   };
 
+  const stopUpdate = () => {
+    setIsUpdate(false);
+  };
+
+  const resetCamChart = () => {
+    console.log('눌린거 맞아?>');
+    index.current = 0;
+
+    const initLayout = {
+      ...layoutConfig,
+      annotations: annotationsArray[index.current],
+    };
+
+    console.log(initLayout);
+    console.log(index.current);
+    window.Plotly.react(plotRef.current.el, [data], initLayout);
+  };
+
   useAnimationFrame(
     () => {
       if (isUpdate) {
@@ -123,5 +140,13 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     25
   );
 
-  return { plotRef, data, layoutConfig, defaultConfig, startUpdate };
+  return {
+    plotRef,
+    data,
+    layoutConfig,
+    defaultConfig,
+    startUpdate,
+    stopUpdate,
+    resetCamChart,
+  };
 };
