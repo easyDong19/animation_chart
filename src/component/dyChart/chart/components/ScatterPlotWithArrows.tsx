@@ -5,7 +5,7 @@ const makeDegreeToRad = (degree: number) => {
   return (Math.PI / 180) * degree;
 };
 
-const generateCamData = (size: number) => {
+const generateCamData = (size: number, series_length: number) => {
   // 초기 좌표 만들기
   const xStart = [];
   const yStart = [];
@@ -19,37 +19,41 @@ const generateCamData = (size: number) => {
 
   //JSON 데이터 가져오기
   // todo : 자기장 세기 정규화
-  const magData = [];
-  let degreeData = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      magData.push(raw_data[i]['current_xy_mag'][j][400]);
-      degreeData.push(raw_data[i]['current_xy_degree'][j][400]);
+  const totalMagData = [];
+  const totalDegreeData = [];
+  for (let s = 0; s < series_length; s++) {
+    const magData = [];
+    let degreeData = [];
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        magData.push(raw_data[i]['current_xy_mag'][j][s]);
+        degreeData.push(raw_data[i]['current_xy_degree'][j][s]);
+      }
     }
+    //degree => Rad로 변환
+    degreeData = degreeData.map((degree) => makeDegreeToRad(degree));
+    totalMagData.push(magData);
+    totalDegreeData.push(degreeData);
   }
-  //degree => Rad로 변환
-  degreeData = degreeData.map((degree) => makeDegreeToRad(degree));
-
-  console.log(magData);
 
   // 화살표 크기 정규화
   const xEnd = xStart.map((x, i) => {
-    let magnitude = magData[i] * 100;
+    let magnitude = totalMagData[0][i] * 100;
     magnitude = Math.min(Math.max(magnitude, 0.4), 1);
-    return x + magnitude * Math.cos(degreeData[i]);
+    return x + magnitude * Math.cos(totalDegreeData[0][i]);
   });
 
   const yEnd = yStart.map((y, i) => {
-    let magnitude = magData[i] * 100;
+    let magnitude = totalMagData[0][i] * 100;
     magnitude = Math.min(Math.max(magnitude, 0.4), 1);
-    return y + magnitude * Math.sin(degreeData[i]);
+    return y + magnitude * Math.sin(totalDegreeData[0][i]);
   });
 
-  return { xStart, yStart, xEnd, yEnd, magData };
+  return { xStart, yStart, xEnd, yEnd, totalMagData };
 };
 
 const ScatterPlotWithArrows = () => {
-  const { xStart, yStart, xEnd, yEnd, magData } = generateCamData(21);
+  const { xStart, yStart, xEnd, yEnd, totalMagData } = generateCamData(21, 461);
 
   const scatterData = {
     x: xStart,
@@ -71,8 +75,8 @@ const ScatterPlotWithArrows = () => {
     ayref: 'y',
     showarrow: true,
     arrowhead: 2, // arrowHead 모양
-    arrowsize: Math.min(Math.max(magData[i] * 100, 1.2), 1.5),
-    arrowwidth: Math.min(Math.max(magData[i] * 100, 1.2), 2),
+    arrowsize: Math.min(Math.max(totalMagData[0][i] * 100, 0.8), 1.5),
+    arrowwidth: Math.min(Math.max(totalMagData[0][i] * 100, 1), 1.5),
     arrowcolor: 'black',
   }));
 
