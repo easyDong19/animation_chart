@@ -18,12 +18,13 @@ const generateCamData = (size: number) => {
   }
 
   //JSON 데이터 가져오기
+  // todo : 자기장 세기 정규화
   const magData = [];
   let degreeData = [];
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      magData.push(raw_data[i]['current_xy_mag'][j][4]);
-      degreeData.push(raw_data[i]['current_xy_degree'][j][4]);
+      magData.push(raw_data[i]['current_xy_mag'][j][5]);
+      degreeData.push(raw_data[i]['current_xy_degree'][j][5]);
     }
   }
   //degree => Rad로 변환
@@ -72,8 +73,8 @@ const ScatterPlotWithArrows = () => {
 
   const layout = {
     title: '2D Scatter Plot with Arrows',
-    xaxis: { title: 'X Axis', showgrid: true },
-    yaxis: { title: 'Y Axis', showgrid: true },
+    xaxis: { visible: false, showgrid: false },
+    yaxis: { visible: false, showgrid: false },
     annotations: annotations,
     shapes: [],
   };
