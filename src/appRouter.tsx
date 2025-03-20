@@ -12,7 +12,8 @@ import HeatmapRChart from './component/chart/test/TestHeatmapR';
 import DyChartPage from './DyChartPage';
 import { DyHeatmapChartPage } from './DyHeatmapChartPage';
 import { CocurrentChartPage } from '@/CocurrentChartPage';
-import { CAMChartPage } from '@/CAMChartPage';
+import { HeatmapTestPage } from '@/heatmapTestPage';
+import { CamChartTestPage } from '@/CamChartTestPage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -24,7 +25,8 @@ export const AppRouter = () => {
       <Route path='/dychart' element={<DyChartPage />} />
       <Route path='/dyheatmap' element={<DyHeatmapChartPage />} />
       <Route path='/cocurrent' element={<CocurrentChartPage />} />
-      <Route path='camchart' element={<CAMChartPage />} />
+      <Route path='/realheatmap' element={<HeatmapTestPage />} />
+      <Route path='/cam' element={<CamChartTestPage />} />
     </Route>
   );
 
