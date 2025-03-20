@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import raw_data from '@/data/feature_data_Rounding.json';
 import { useAnimationFrame } from '@/util/useAnimationFrame';
+import { useInterval } from '@/util/useInterval';
+import { time } from 'three/tsl';
 
 const makeDegreeToRad = (degree: number) => {
   return (Math.PI / 180) * degree;
@@ -143,7 +145,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
   };
 
   const changeSpeed = (speedFactor: number) => {
-    setTimeFactor(() => speedFactor);
+    setTimeFactor(speedFactor);
     console.log('클릭됨?');
     console.log(timeFactor);
   };
@@ -162,15 +164,21 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     progressRef.current.value = 0;
   };
 
-  useAnimationFrame(
-    () => {
-      if (isUpdate) {
-        updateCamChart();
-      }
-    },
-    isUpdate,
-    timeFactor
-  );
+  // useAnimationFrame(
+  //   () => {
+  //     if (isUpdate) {
+  //       updateCamChart();
+  //     }
+  //   },
+  //   isUpdate,
+  //   4
+  // );
+
+  useInterval(() => {
+    if (isUpdate) {
+      updateCamChart();
+    }
+  }, 1000 / timeFactor);
 
   return {
     plotRef,
@@ -182,6 +190,8 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
     resetCamChart,
     progressRef,
     changeSpeed,
+    timeFactor,
+
     handleProgressChange,
   };
 };
