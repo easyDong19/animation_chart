@@ -39,7 +39,7 @@ export const useHeatMap = (chartData, size: number) => {
     {
       x: x,
       y: y,
-      z: zData[index.current], // ✅ 초기 z 값
+      z: zData[index.current],
       type: 'heatmap',
       colorscale: 'Jet',
       zsmooth: 'best',
@@ -64,8 +64,8 @@ export const useHeatMap = (chartData, size: number) => {
           type: 'heatmap',
           colorscale: 'Jet',
           zsmooth: 'best',
-          zmin: 0,
-          zmax: 100,
+          zmin: Math.min(zData[index.current]),
+          zmax: Math.max(zData[index.current]),
         },
       ],
       plotRef.current.props.layout
@@ -90,8 +90,8 @@ export const useHeatMap = (chartData, size: number) => {
             type: 'heatmap',
             colorscale: 'Jet',
             zsmooth: 'best',
-            zmin: 0,
-            zmax: 100,
+            zmin: Math.min(zData[index.current]),
+            zmax: Math.max(zData[index.current]),
           },
         ],
         plotRef.current.props.layout
@@ -103,10 +103,11 @@ export const useHeatMap = (chartData, size: number) => {
     () => {
       if (isUpdate) {
         updateHeatMap();
+        console.log(index.current);
       }
     },
     isUpdate,
-    0.5
+    25
   );
 
   return {
