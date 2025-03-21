@@ -13,11 +13,13 @@ export const RealCamTestPage = () => {
     resetCamChart,
     progressRef,
     changeSpeed,
+    timeFactor,
     handleProgressChange,
   } = useCamChart(raw_data, 21, 460);
   return (
     <div className='w-2/4'>
       <CamChart field={{ plotRef, data, layoutConfig, defaultConfig }} />
+      <div>{timeFactor}</div>
       <div className='flex flex-row gap-4'>
         <button className='border' onClick={startUpdate}>
           업데이트 차트
@@ -52,8 +54,8 @@ export const RealCamTestPage = () => {
         <button className='border' onClick={() => changeSpeed(1.5)}>
           1.5
         </button>
-        <button className='border' onClick={() => changeSpeed(2)}>
-          2
+        <button className='border' onClick={() => changeSpeed(10)}>
+          10
         </button>
       </div>
     </div>

@@ -4,7 +4,7 @@ export function useAnimationFrame(
   callback: () => void,
   isActive: boolean = true,
   speedFactor: number = 1,
-  timeFactor: number = 100
+  timeFactor: number = 1000
 ) {
   const savedCallback = useRef<() => void>();
   const animationFrameRef = useRef<number | null>(null);
@@ -26,7 +26,7 @@ export function useAnimationFrame(
       const deltaTime = time - lastTimeRef.current;
 
       // 1000 = 1sec
-      if (deltaTime >= timeFactor * speedFactor) {
+      if (deltaTime >= timeFactor / speedFactor) {
         savedCallback.current?.();
         lastTimeRef.current = time;
       }
