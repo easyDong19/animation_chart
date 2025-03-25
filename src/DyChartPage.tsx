@@ -112,19 +112,6 @@ const DyChartPage = () => {
       },
     ],
   };
-  const generateRandomVectors = (count: number, length: number = 1) => {
-    return Array.from({ length: count }, () => {
-      const angle = Math.random() * Math.PI * 2;
-      return {
-        x: Math.random() * 10 - 5,
-        y: Math.random() * 10 - 5,
-        z: 0,
-        ux: Math.cos(angle) * length,
-        vy: Math.sin(angle) * length,
-        wz: Math.sin(angle) * length,
-      };
-    });
-  };
 
   return (
     <div className='w-5/6 '>

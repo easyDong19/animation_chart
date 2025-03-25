@@ -15,6 +15,7 @@ import { CocurrentChartPage } from '@/CocurrentChartPage';
 import { HeatmapTestPage } from '@/heatmapTestPage';
 import { CamChartTestPage } from '@/CamChartTestPage';
 import { RealCamTestPage } from '@/RealCamTestPage';
+import { ThreePage } from '@/ThreePage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -29,6 +30,7 @@ export const AppRouter = () => {
       <Route path='/realheatmap' element={<HeatmapTestPage />} />
       <Route path='/cam' element={<CamChartTestPage />} />
       <Route path='/realcam' element={<RealCamTestPage />} />
+      <Route path='/egg' element={<ThreePage />} />
     </Route>
   );
 

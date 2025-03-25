@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import raw_data from '@/data/feature_data_Rounding.json';
 import { useAnimationFrame } from '@/util/useAnimationFrame';
 import { useInterval } from '@/util/useInterval';
-import { time } from 'three/tsl';
 
 const makeDegreeToRad = (degree: number) => {
   return (Math.PI / 180) * degree;
@@ -158,8 +157,6 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
       annotations: annotationsArray[index.current],
     };
 
-    console.log(initLayout);
-    console.log(index.current);
     // window.Plotly.react(plotRef.current.el, [data], initLayout);
     const newLayout = {
       annotations: annotationsArray[index.current], // 새로운 화살표 데이터로 덮어쓰기
@@ -167,6 +164,7 @@ export const useCamChart = (rawData, size: number, series_length: number) => {
 
     window.Plotly.relayout(plotRef.current.el, newLayout);
     progressRef.current.value = 0;
+    setTimeFactor(1);
   };
 
   // useAnimationFrame(

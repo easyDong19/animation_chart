@@ -6,6 +6,7 @@ import MagneticFieldMap from './component/protoChart/magnetic/MagneticFieldMap';
 import PolarScatterChart from './component/protoChart/radar/PolarChart';
 import { MagneticArrowFieldMap } from './component/protoChart/magnetic/MagneticArrowFiledMap';
 import { BaseChart } from '@/component/common/BaseChart';
+import RangeSliderChart from '@/component/chart/test/TestRangeChart';
 
 function ProtoTypeChart() {
   const chartRef_line = useRef<{
@@ -106,6 +107,9 @@ function ProtoTypeChart() {
               <MagneticArrowFieldMap />
             </BaseChart.content>
           </BaseChart>
+        </div>
+        <div>
+          <RangeSliderChart />
         </div>
       </div>
     </div>

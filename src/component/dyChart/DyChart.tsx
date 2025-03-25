@@ -5,12 +5,6 @@ import { Title } from './component/header/Title';
 import { Button } from './component/header/Button';
 import { EcgChart } from './chart/components/EcgChart';
 import { HeatMapChart } from './chart/components/HeatMapChart';
-// 공통된 요소
-// data, layout, config
-
-/**
- * 헤더 안에 버튼과 제목
- */
 
 // todo : 컴포넌트를 넘겨도 그냥 랜더링할수있게 수정, 원래 설정도
 const fieldComponents = {
