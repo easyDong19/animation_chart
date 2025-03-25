@@ -11,8 +11,8 @@ const generateHeatmapData = (size: number, frames: number) => {
 
 export const HeatMapChartWrapper = () => {
   const raw_data = generateHeatmapData(30, 500);
-
   console.log(raw_data);
+
   const {
     plotRef,
     resetHeatMap,

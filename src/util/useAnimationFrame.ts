@@ -4,7 +4,7 @@ export function useAnimationFrame(
   callback: () => void,
   isActive: boolean = true,
   speedFactor: number = 1,
-  startAfter: number = 0
+  timeFactor: number = 1000
 ) {
   const savedCallback = useRef<() => void>();
   const animationFrameRef = useRef<number | null>(null);
@@ -18,20 +18,37 @@ export function useAnimationFrame(
   useEffect(() => {
     if (!isActive) return;
 
-    const tick = (time: number) => {
+    const tick = (time) => {
       if (lastTimeRef.current === null) {
         lastTimeRef.current = time;
       }
 
-      const deltaTime = (time - lastTimeRef.current) * speedFactor;
+      const deltaTime = time - lastTimeRef.current;
 
-      if (deltaTime >= 16) {
-        if (savedCallback.current) savedCallback.current();
+      // 1000 = 1sec
+      if (deltaTime >= timeFactor / speedFactor) {
+        savedCallback.current?.();
         lastTimeRef.current = time;
       }
 
-      animationFrameRef.current = requestAnimationFrame(tick);
+      requestAnimationFrame(tick);
     };
+
+    // const tick = (time: number) => {
+    //   if (lastTimeRef.current === null) {
+    //     lastTimeRef.current = time;
+    //   }
+
+    //   const deltaTime = (time - lastTimeRef.current) * speedFactor;
+
+    //   // 60FPS 기준 16ms
+    //   if (deltaTime >= frameFactor) {
+    //     if (savedCallback.current) savedCallback.current();
+    //     lastTimeRef.current = time;
+    //   }
+
+    //   animationFrameRef.current = requestAnimationFrame(tick);
+    // };
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (animationFrameRef.current)
@@ -39,12 +56,12 @@ export function useAnimationFrame(
 
     timeoutRef.current = setTimeout(() => {
       animationFrameRef.current = requestAnimationFrame(tick);
-    }, startAfter);
+    }, 0);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (animationFrameRef.current)
         cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [isActive, speedFactor, startAfter]);
+  }, [isActive, speedFactor]);
 }

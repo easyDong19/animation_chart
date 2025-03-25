@@ -5,20 +5,31 @@ import { useHeatMap } from '@/component/dyChart/chart/hook/useHeatMap';
 import { HeatMapChart } from '@/component/dyChart/chart/components/HeatMapChart';
 
 const generateHeatmapData = (size: number, series_length: number) => {
-  const data = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      data.push(raw_data[i]['Bz'][j][0]);
+  const totalData = [];
+
+  for (let s = 0; s < series_length; s++) {
+    const data = [];
+    for (let i = 0; i < size; i++) {
+      const jData = [];
+
+      for (let j = 0; j < size; j++) {
+        jData.push(raw_data[i]['Bz'][j][s]);
+      }
+      data.push(jData);
     }
+    totalData.push(data);
   }
-  return [data];
+
+  console.log(totalData);
+
+  return totalData;
 };
+
+const chartData = generateHeatmapData(21, 461);
 export const HeatmapTestPage = () => {
-  console.log(xy_mag);
-  console.log(bz_data);
   console.log(raw_data);
-  const chartData = generateHeatmapData(21, 461);
   console.log(chartData);
+  console.log(chartData.length);
 
   const {
     plotRef,
@@ -31,18 +42,20 @@ export const HeatmapTestPage = () => {
   } = useHeatMap(chartData, 21);
 
   return (
-    <div className='w-1/5'>
+    <div className='w-2/5'>
       <HeatMapChart
         field={{
           plotRef,
-          resetHeatMap,
-          startUpdate,
-          stopUpdate,
           layoutConfig,
           defaultConfig,
           data,
         }}
       />
+      <div>
+        <button onClick={startUpdate}>스타트</button>
+        <button onClick={stopUpdate}>스탑</button>
+        <button onClick={resetHeatMap}>리셋</button>
+      </div>
     </div>
   );
 };

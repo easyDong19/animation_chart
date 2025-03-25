@@ -1,4 +1,5 @@
 import { useAnimationFrame } from '@/util/useAnimationFrame';
+import { useInterval } from '@/util/useInterval';
 import { useRef, useState } from 'react';
 
 // ! 히트맵은 인덱스가 달라지는 구조
@@ -12,6 +13,7 @@ export const useHeatMap = (chartData, size: number) => {
   const plotRef = useRef<any>(null);
   const index = useRef<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [timeFactor, setTimeFactor] = useState<number>(1);
 
   const x = Array.from({ length: size }, (_, i) => i);
   const y = Array.from({ length: size }, (_, i) => i);
@@ -39,7 +41,7 @@ export const useHeatMap = (chartData, size: number) => {
     {
       x: x,
       y: y,
-      z: zData[index.current], // ✅ 초기 z 값
+      z: zData[index.current],
       type: 'heatmap',
       colorscale: 'Jet',
       zsmooth: 'best',
@@ -64,14 +66,17 @@ export const useHeatMap = (chartData, size: number) => {
           type: 'heatmap',
           colorscale: 'Jet',
           zsmooth: 'best',
-          zmin: 0,
-          zmax: 100,
+          zmin: Math.min(zData[index.current]),
+          zmax: Math.max(zData[index.current]),
         },
       ],
       plotRef.current.props.layout
     );
   };
 
+  const changeSpeed = (speedFactor: number) => {
+    setTimeFactor(speedFactor);
+  };
   const startUpdate = () => {
     setIsUpdate(true);
   };
@@ -90,8 +95,8 @@ export const useHeatMap = (chartData, size: number) => {
             type: 'heatmap',
             colorscale: 'Jet',
             zsmooth: 'best',
-            zmin: 0,
-            zmax: 100,
+            zmin: Math.min(zData[index.current]),
+            zmax: Math.max(zData[index.current]),
           },
         ],
         plotRef.current.props.layout
@@ -106,8 +111,14 @@ export const useHeatMap = (chartData, size: number) => {
       }
     },
     isUpdate,
-    0.5
+    timeFactor
   );
+
+  useInterval(() => {
+    if (isUpdate) {
+      updateHeatMap();
+    }
+  }, 10 / timeFactor);
 
   return {
     plotRef,
@@ -116,6 +127,7 @@ export const useHeatMap = (chartData, size: number) => {
     stopUpdate,
     layoutConfig,
     defaultConfig,
+    changeSpeed,
     data,
   };
 };
