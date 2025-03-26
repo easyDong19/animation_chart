@@ -1,5 +1,5 @@
-import { useEffect, useRef, Suspense } from 'react';
-import { useLoader, useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useRef, Suspense, useState } from 'react';
+import { useLoader, useFrame, useThree, Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { OBJLoader } from 'three-stdlib';
@@ -10,16 +10,115 @@ export const EggTest = () => {
   const pivotRef = useRef<THREE.Group>(null);
 
   return (
+    <div className='w-[800px] h-[800px] bg-gray-400'>
+      <Canvas
+        gl={{ alpha: true }}
+        style={{ background: 'transparent' }}
+        camera={{ position: [100, 100, 0] }}
+      >
+        <ambientLight />
+        <directionalLight position={[5, 5, 5]} />
+        <group ref={pivotRef} position={[2, 0, 0]} name='basis'>
+          <EggObjModel modelPath='/egg2.obj' />
+        </group>
+        <PivotControls pivotRef={pivotRef} />
+      </Canvas>
+    </div>
+  );
+};
+
+export function EggWrapper({ modelPath }: { modelPath: string }) {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  return (
+    <div className='w-[800px] h-[800px] bg-gray-400 relative'>
+      <Canvas
+        gl={{ alpha: true }}
+        style={{ background: 'transparent' }}
+        camera={{ position: [100, 100, 0] }}
+      >
+        <directionalLight position={[5, 5, 5]} />
+        <IndexEggObjModel modelPath={modelPath} isAnimating={isAnimating} />
+      </Canvas>
+
+      <div className='absolute z-10 top-2 left-2'>
+        <button
+          onClick={() => setIsAnimating((prev) => !prev)}
+          className='px-4 py-2 bg-white rounded shadow'
+        >
+          {isAnimating ? '정지' : '애니메이션 시작'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function IndexEggObjModel({
+  modelPath,
+  isAnimating,
+}: {
+  modelPath: string;
+  isAnimating: boolean;
+}) {
+  const obj = useLoader(OBJLoader, modelPath);
+  const geometry = obj.children[0].geometry as THREE.BufferGeometry;
+  const mesh = obj.children[0] as THREE.Mesh;
+  const positionAttr = geometry.attributes.position;
+  const vertexCount = positionAttr.count;
+  const colorAttrRef = useRef<THREE.BufferAttribute | null>(null);
+  const pivotRef = useRef<THREE.Group>(null);
+
+  mesh.material = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    side: THREE.DoubleSide,
+  });
+
+  useEffect(() => {
+    const box = new THREE.Box3().setFromObject(obj);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    obj.position.sub(center);
+
+    const colors = new Float32Array(vertexCount * 3);
+    const attr = new THREE.BufferAttribute(colors, 3);
+    geometry.setAttribute('color', attr);
+    colorAttrRef.current = attr;
+  }, [obj]);
+
+  useFrame(({ clock }) => {
+    if (!isAnimating) return;
+
+    const colorAttr = colorAttrRef.current;
+    if (!mesh || !colorAttr) return;
+
+    const position = geometry.attributes.position;
+    const time = clock.getElapsedTime();
+
+    for (let i = 0; i < vertexCount; i++) {
+      const y = position.getY(i);
+      const t = (Math.sin(y * 2 + time * 2) + 1) / 2;
+
+      const r = t;
+      const g = 0;
+      const b = 1 - t;
+
+      colorAttr.setXYZ(i, r, g, b);
+    }
+
+    colorAttr.needsUpdate = true;
+  });
+
+  return (
     <>
       <ambientLight />
       <directionalLight position={[5, 5, 5]} />
       <group ref={pivotRef} position={[2, 0, 0]} name='basis'>
-        <EggObjModel modelPath='/egg.obj' />
+        <primitive object={obj} />
       </group>
       <PivotControls pivotRef={pivotRef} />
     </>
   );
-};
+}
 
 /**
  * 임시로 렌더링할 데이터 생성(feature_data_Rounding.json)
@@ -126,15 +225,17 @@ function jetColor(t: number): [number, number, number] {
   return [r / 255, g / 255, b / 255];
 }
 
+// non-index로 정점 중복 안함
 function EggObjModel({ modelPath }: { modelPath: string }) {
   const obj = useLoader(OBJLoader, modelPath);
   const geometry = obj.children[0].geometry as THREE.BufferGeometry;
   const mesh = obj.children[0] as THREE.Mesh;
 
   const positionAttr = geometry.attributes.position;
-  const faceCount = positionAttr.count / 3;
+  const vertexCount = positionAttr.count;
+  const faceCount = vertexCount / 3;
 
-  const colorData = generateHeatMapData(faceCount); // [time][face][rgb]
+  const colorData = generateHeatMapData(faceCount);
   const seriesRef = useRef(0);
   const colorAttrRef = useRef<THREE.BufferAttribute | null>(null);
 
@@ -149,13 +250,12 @@ function EggObjModel({ modelPath }: { modelPath: string }) {
     box.getCenter(center);
     obj.position.sub(center);
 
-    const colors = new Float32Array(positionAttr.count * 3);
+    const colors = new Float32Array(vertexCount * 3);
     const attr = new THREE.BufferAttribute(colors, 3);
     geometry.setAttribute('color', attr);
     colorAttrRef.current = attr;
   }, [obj]);
 
-  // 💡 애니메이션: 색상 시간 변화
   useFrame(() => {
     const attr = colorAttrRef.current;
     if (!attr) return;
@@ -175,7 +275,6 @@ function EggObjModel({ modelPath }: { modelPath: string }) {
 
     attr.needsUpdate = true;
 
-    // 🔁 시리즈 증가 후 루프
     seriesRef.current = (series + 1) % colorData.length;
   });
 
