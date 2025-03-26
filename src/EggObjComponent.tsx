@@ -53,7 +53,7 @@ export function EggWrapper({ modelPath }: { modelPath: string }) {
   );
 }
 
-function IndexEggObjModel({
+export function IndexEggObjModel({
   modelPath,
   isAnimating,
 }: {
@@ -74,28 +74,25 @@ function IndexEggObjModel({
   });
 
   useEffect(() => {
-    const box = new THREE.Box3().setFromObject(obj);
     const center = new THREE.Vector3();
-    box.getCenter(center);
-    obj.position.sub(center);
+    geometry.translate(-center.x, -center.y, -center.z);
 
     const colors = new Float32Array(vertexCount * 3);
     const attr = new THREE.BufferAttribute(colors, 3);
     geometry.setAttribute('color', attr);
     colorAttrRef.current = attr;
-  }, [obj]);
+  }, [geometry, positionAttr, vertexCount]);
 
   useFrame(({ clock }) => {
     if (!isAnimating) return;
 
     const colorAttr = colorAttrRef.current;
-    if (!mesh || !colorAttr) return;
+    if (!colorAttr) return;
 
-    const position = geometry.attributes.position;
     const time = clock.getElapsedTime();
 
     for (let i = 0; i < vertexCount; i++) {
-      const y = position.getY(i);
+      const y = positionAttr.getY(i);
       const t = (Math.sin(y * 2 + time * 2) + 1) / 2;
 
       const r = t;
@@ -112,9 +109,12 @@ function IndexEggObjModel({
     <>
       <ambientLight />
       <directionalLight position={[5, 5, 5]} />
+
       <group ref={pivotRef} position={[2, 0, 0]} name='basis'>
+        {/* 🔹 원래 메쉬 */}
         <primitive object={obj} />
       </group>
+
       <PivotControls pivotRef={pivotRef} />
     </>
   );
@@ -135,20 +135,30 @@ function generateHeatMapData(faceCount: number) {
   }
 
   console.log(heatmapData);
-  let min = Infinity;
-  let max = -Infinity;
+  //   let min = Infinity;
+  //   let max = -Infinity;
 
-  for (const row of heatmapData) {
+  // //   for (const row of heatmapData) {
+  // //     for (const val of row) {
+  // //       if (val < min) min = val;
+  // //       if (val > max) max = val;
+  // //     }
+  // //   }
+  // //   console.log(min);
+  // //   console.log(max);
+
+  // 히트맵 색깔 지정을 위해 정규화
+  const normalizedData = heatmapData.map((row) => {
+    let min = Infinity;
+    let max = -Infinity;
+
     for (const val of row) {
       if (val < min) min = val;
       if (val > max) max = val;
     }
-  }
 
-  // 히트맵 색깔 지정을 위해 정규화
-  const normalizedData = heatmapData.map((row) =>
-    row.map((val) => (val - min) / (max - min))
-  );
+    return row.map((val) => (val - min) / (max - min));
+  });
 
   console.log(normalizedData);
   const rgbArray = normalizedData.map((row) => row.map((val) => jetColor(val)));
@@ -256,21 +266,38 @@ function EggObjModel({ modelPath }: { modelPath: string }) {
     colorAttrRef.current = attr;
   }, [obj]);
 
+  //   useFrame(() => {
+  //     const attr = colorAttrRef.current;
+  //     if (!attr) return;
+
+  //     const series = seriesRef.current;
+  //     const colors = attr.array as Float32Array;
+
+  //     for (let i = 0; i < faceCount; i++) {
+  //       const [r, g, b] = colorData[series][i];
+  //       for (let j = 0; j < 3; j++) {
+  //         const idx = (i * 3 + j) * 3;
+  //         colors[idx + 0] = r;
+  //         colors[idx + 1] = g;
+  //         colors[idx + 2] = b;
+  //       }
+  //     }
+
+  //     attr.needsUpdate = true;
+
+  //     seriesRef.current = (series + 1) % colorData.length;
+  //   });
+
   useFrame(() => {
     const attr = colorAttrRef.current;
     if (!attr) return;
 
     const series = seriesRef.current;
-    const colors = attr.array as Float32Array;
 
-    for (let i = 0; i < faceCount; i++) {
-      const [r, g, b] = colorData[series][i];
-      for (let j = 0; j < 3; j++) {
-        const idx = (i * 3 + j) * 3;
-        colors[idx + 0] = r;
-        colors[idx + 1] = g;
-        colors[idx + 2] = b;
-      }
+    for (let i = 0; i < vertexCount; i++) {
+      const [r, g, b] = colorData[series][i % faceCount];
+
+      attr.setXYZ(i, r, g, b);
     }
 
     attr.needsUpdate = true;
