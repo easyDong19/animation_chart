@@ -29,6 +29,7 @@ export const EggTest = () => {
 
 export function EggWrapper({ modelPath }: { modelPath: string }) {
   const [isAnimating, setIsAnimating] = useState(false);
+  const pivotRef = useRef<THREE.Group>(null);
 
   return (
     <div className='w-[800px] h-[800px] bg-gray-400 relative'>
@@ -75,7 +76,10 @@ export function IndexEggObjModel({
 
   useEffect(() => {
     const center = new THREE.Vector3();
-    geometry.translate(-center.x, -center.y, -center.z);
+
+    const box = new THREE.Box3().setFromObject(obj);
+    box.getCenter(center);
+    obj.position.sub(center);
 
     const colors = new Float32Array(vertexCount * 3);
     const attr = new THREE.BufferAttribute(colors, 3);
