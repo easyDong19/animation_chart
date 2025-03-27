@@ -10,6 +10,7 @@ const generateQuiverData = (rawData, size: number, series_length: number) => {
   const yStart = [];
   const shapesArray = [];
 
+  // x축 y축 범위 -200~200
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
       xStart.push(i * 20 - 200);
@@ -38,15 +39,12 @@ const generateQuiverData = (rawData, size: number, series_length: number) => {
       const x1 = x0 + dx;
       const y1 = y0 + dy;
 
-      // 개선된 화살표 머리 계산
       const headLength = 5;
       const angle = Math.atan2(dy, dx);
 
-      // 꼭짓점은 선보다 더 앞으로
       const tipX = x1 + headLength * Math.cos(angle);
       const tipY = y1 + headLength * Math.sin(angle);
 
-      // 밑변은 뒤쪽 좌우로 퍼짐
       const baseAngle1 = angle + Math.PI / 3;
       const baseAngle2 = angle - Math.PI / 3;
 
