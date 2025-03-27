@@ -160,6 +160,10 @@ export const PQRSTChart = () => {
       },
       [pqrstData.length]
     );
+
+    if (indexLabelRef.current) {
+      indexLabelRef.current.innerText = `${newIndex} / ${frameCount - 1}`;
+    }
   };
 
   const playKeyPoint = useMemo(
