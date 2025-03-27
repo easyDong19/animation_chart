@@ -25,7 +25,7 @@ const generateHeatmapData = (size: number, series_length: number) => {
   return totalData;
 };
 
-const chartData = generateHeatmapData(21, 461);
+const chartData = generateHeatmapData(21, 460);
 export const HeatmapTestPage = () => {
   console.log(raw_data);
   console.log(chartData);
