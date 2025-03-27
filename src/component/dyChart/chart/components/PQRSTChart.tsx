@@ -97,6 +97,8 @@ export const PQRSTChart = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const index = useRef<number>(0);
   const frameCount = pqrstData[0].x.length;
+  const indexLabelRef = useRef<HTMLSpanElement>(null);
+  const [speed, setSpeed] = useState<number>(1);
 
   const updateKeyPoint = () => {
     index.current += 1;
@@ -113,6 +115,10 @@ export const PQRSTChart = () => {
 
     if (progressRef.current) {
       progressRef.current.value = index.current.toString(); // ✅ 정수 그대로
+    }
+
+    if (indexLabelRef.current) {
+      indexLabelRef.current.innerText = `${index.current} / ${frameCount - 1}`;
     }
   };
 
@@ -132,11 +138,15 @@ export const PQRSTChart = () => {
     if (progressRef.current) {
       progressRef.current.value = '0';
     }
+
+    if (indexLabelRef.current) {
+      indexLabelRef.current.innerText = `0 / ${frameCount - 1}`;
+    }
   }, [pqrstData.length]);
 
   useInterval(() => {
     if (isUpdate) updateKeyPoint();
-  }, 100);
+  }, 100 / speed);
 
   const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newIndex = parseInt(event.target.value);
@@ -195,17 +205,33 @@ export const PQRSTChart = () => {
           리셋
         </button>
       </div>
-      <div className='flex'>
+      <div className='flex items-center w-full gap-2'>
+        {/* 슬라이더 */}
         <input
           type='range'
           ref={progressRef}
           min='0'
           max={frameCount - 1}
-          defaultValue='0'
+          value={index.current}
           step='1'
           onChange={handleProgressChange}
-          style={{ width: '100%' }}
+          className='w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer
+               [&::-webkit-slider-thumb]:appearance-none
+               [&::-webkit-slider-thumb]:w-4
+               [&::-webkit-slider-thumb]:h-4
+               [&::-webkit-slider-thumb]:rounded-full
+               [&::-webkit-slider-thumb]:bg-white
+               [&::-webkit-slider-thumb]:border-4
+               [&::-webkit-slider-thumb]:border-gray-500'
         />
+
+        {/* 인덱스 표시 */}
+        <span
+          ref={indexLabelRef}
+          className='text-xs text-gray-400 whitespace-nowrap'
+        >
+          0 / {frameCount - 1}
+        </span>
       </div>
     </div>
   );
