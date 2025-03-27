@@ -212,7 +212,7 @@ export const PQRSTChart = () => {
           ref={progressRef}
           min='0'
           max={frameCount - 1}
-          value={index.current}
+          defaultValue='0'
           step='1'
           onChange={handleProgressChange}
           className='w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer
