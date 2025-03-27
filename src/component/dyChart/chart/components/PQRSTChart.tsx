@@ -1,7 +1,12 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import Plot from 'react-plotly.js';
 import Rawdata from '@/data/patient_P3434223_maps.json';
-import { or } from 'mathjs';
 import { useInterval } from '@/util/useInterval';
 
 interface TraceDataFormat {
@@ -41,27 +46,22 @@ const generateColorPalette = (count: number): string[] => {
 };
 
 const createMetaInfo = (metaData: MetaInfoType) => {
-  let metaDataList = [];
-  metaDataList = Object.entries(metaData).map(([key, x]) => {
-    return {
-      x: [x, x],
-      y: [-1, 1],
-      type: 'scatter',
-      mode: 'lines+markers',
-      line: {
-        color: metaInfoColor[key],
-        width: 1,
-      },
-      marker: {
-        size: 1,
-        opacity: 0,
-      },
-      hoverinfo: 'text',
-      text: [`info: ${key}\n index: ${x}`, `info: ${key}\n index: ${x}`],
-    };
-  });
-
-  return metaDataList;
+  return Object.entries(metaData).map(([key, x]) => ({
+    x: [x, x],
+    y: [-1, 1],
+    type: 'scatter',
+    mode: 'lines+markers',
+    line: {
+      color: metaInfoColor[key],
+      width: 1,
+    },
+    marker: {
+      size: 1,
+      opacity: 0,
+    },
+    hoverinfo: 'text',
+    text: [`info: ${key}\n index: ${x}`, `info: ${key}\n index: ${x}`],
+  }));
 };
 
 const createPQRSTData = (
@@ -71,11 +71,8 @@ const createPQRSTData = (
 ): TraceDataFormat[] => {
   const series = originData[key];
   const timeSeriesLength = series[0]?.length ?? 0;
-
-  // PQRST 포인트 기록
   const metaInfo = originData[metaInfoKey];
   const metaInfoList = createMetaInfo(metaInfo);
-
   const x = Array.from({ length: timeSeriesLength }, (_, i) => i);
   const colors = generateColorPalette(series.length);
 
@@ -86,7 +83,7 @@ const createPQRSTData = (
     mode: 'lines',
     line: {
       color: colors[idx],
-      size: 0.5,
+      width: 0.5,
     },
   }));
 
@@ -95,23 +92,11 @@ const createPQRSTData = (
 
 export const PQRSTChart = () => {
   const plotRef = useRef<any>(null);
+  const progressRef = useRef<HTMLInputElement>(null);
   const pqrstData = useMemo(() => createPQRSTData(Rawdata), []);
   const [isUpdate, setIsUpdate] = useState(false);
   const index = useRef<number>(0);
   const frameCount = pqrstData[0].x.length;
-
-  const ResetIndex = useCallback(() => {
-    setIsUpdate(false);
-    index.current = 0;
-    // 바로 위치 리셋
-    window.Plotly.restyle(
-      plotRef.current.el,
-      {
-        x: [[index.current, index.current]],
-      },
-      [pqrstData.length]
-    ); // 마지막 trace의 index
-  }, [pqrstData.length]);
 
   const updateKeyPoint = () => {
     index.current += 1;
@@ -119,38 +104,67 @@ export const PQRSTChart = () => {
       setIsUpdate(false);
     }
 
-    // playKeyPoint의 trace(index = pqrstData.length)의 x만 업데이트
+    const newX = [[index.current, index.current]];
+    const newText = [`index: ${index.current}`, `index: ${index.current}`];
+
+    window.Plotly.restyle(plotRef.current.el, { x: newX, text: newText }, [
+      pqrstData.length,
+    ]);
+
+    if (progressRef.current) {
+      progressRef.current.value = index.current.toString(); // ✅ 정수 그대로
+    }
+  };
+
+  const ResetIndex = useCallback(() => {
+    setIsUpdate(false);
+    index.current = 0;
+
     window.Plotly.restyle(
       plotRef.current.el,
       {
-        x: [[index.current, index.current]],
-        text: [`index: ${index.current}`, `index: ${index.current}`],
+        x: [[0, 0]],
+        text: ['index: 0', 'index: 0'],
+      },
+      [pqrstData.length]
+    );
+
+    if (progressRef.current) {
+      progressRef.current.value = '0';
+    }
+  }, [pqrstData.length]);
+
+  useInterval(() => {
+    if (isUpdate) updateKeyPoint();
+  }, 100);
+
+  const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newIndex = parseInt(event.target.value);
+    index.current = newIndex;
+
+    window.Plotly.restyle(
+      plotRef.current.el,
+      {
+        x: [[newIndex, newIndex]],
+        text: [`index: ${newIndex}`, `index: ${newIndex}`],
       },
       [pqrstData.length]
     );
   };
 
-  useInterval(() => {
-    if (isUpdate) {
-      updateKeyPoint();
-    }
-  }, 100);
-
-  // 마지막 trace가 움직이는 red line
   const playKeyPoint = useMemo(
     () => ({
-      x: [index.current, index.current],
+      x: [0, 0],
       y: [-1, 1],
       type: 'scatter',
       mode: 'lines',
       line: {
         color: 'red',
-        width: 5,
+        width: 1,
         dash: 'dot',
       },
-
       hoverinfo: 'text',
-      text: [`index: ${index.current}`, `index: ${index.current}`],
+      text: ['index: 0', 'index: 0'],
     }),
     []
   );
@@ -180,6 +194,18 @@ export const PQRSTChart = () => {
         <button className='p-2 border' onClick={ResetIndex}>
           리셋
         </button>
+      </div>
+      <div className='flex'>
+        <input
+          type='range'
+          ref={progressRef}
+          min='0'
+          max={frameCount - 1}
+          defaultValue='0'
+          step='1'
+          onChange={handleProgressChange}
+          style={{ width: '100%' }}
+        />
       </div>
     </div>
   );
