@@ -104,15 +104,15 @@ export const useHeatMap = (chartData, size: number) => {
     }
   };
 
-  useAnimationFrame(
-    () => {
-      if (isUpdate) {
-        updateHeatMap();
-      }
-    },
-    isUpdate,
-    timeFactor
-  );
+  // useAnimationFrame(
+  //   () => {
+  //     if (isUpdate) {
+  //       updateHeatMap();
+  //     }
+  //   },
+  //   isUpdate,
+  //   timeFactor
+  // );
 
   useInterval(() => {
     if (isUpdate) {
