@@ -16,6 +16,7 @@ import { HeatmapTestPage } from '@/heatmapTestPage';
 import { CamChartTestPage } from '@/CamChartTestPage';
 import { RealCamTestPage } from '@/RealCamTestPage';
 import { ThreePage } from '@/ThreePage';
+import { SignalInformationPage } from '@/SignalInformationPage';
 
 export const AppRouter = () => {
   const routers = createRoutesFromElements(
@@ -31,6 +32,7 @@ export const AppRouter = () => {
       <Route path='/cam' element={<CamChartTestPage />} />
       <Route path='/realcam' element={<RealCamTestPage />} />
       <Route path='/egg' element={<ThreePage />} />
+      <Route path='/signal' element={<SignalInformationPage />} />
     </Route>
   );
 
