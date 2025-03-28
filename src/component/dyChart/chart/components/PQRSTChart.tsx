@@ -116,10 +116,10 @@ export const PQRSTChart = () => {
   const x = createTimeTable(Rawdata);
 
   const updateKeyPoint = () => {
-    index.current += 1;
-    if (index.current >= frameCount) {
+    if (index.current + 1 > frameCount) {
       setIsUpdate(false);
     }
+    index.current += 1;
 
     const newX = [[x[index.current], x[index.current]]];
     const newText = [`index: ${index.current}`, `index: ${index.current}`];
@@ -129,11 +129,11 @@ export const PQRSTChart = () => {
     ]);
 
     if (progressRef.current) {
-      progressRef.current.value = index.current.toString(); // ✅ 정수 그대로
+      progressRef.current.value = index.current.toString();
     }
 
-    if (indexLabelRef.current) {
-      indexLabelRef.current.innerText = `${index.current} / ${frameCount - 1}`;
+    if (indexLabelRef.current && index.current + 1 <= frameCount) {
+      indexLabelRef.current.innerText = `${x[index.current]} / ${1}`;
     }
   };
 
@@ -159,9 +159,14 @@ export const PQRSTChart = () => {
     }
   }, [pqrstData.length]);
 
-  useInterval(() => {
-    if (isUpdate) updateKeyPoint();
-  }, 100 / speed);
+  // isSingleUse로 만약 차트 컴포넌트가 혼자 사용된다면 여기 내부에 있는 useInterval이 실행되야하고 아니라면 여기꺼는 실행되면 안됨
+  useInterval(
+    () => {
+      if (isUpdate) updateKeyPoint();
+    },
+    isUpdate ? 100 / speed : null
+    // 100 / speed
+  );
 
   const handleStart = () => {
     if (index.current < frameCount - 1) {
@@ -176,14 +181,14 @@ export const PQRSTChart = () => {
     window.Plotly.restyle(
       plotRef.current.el,
       {
-        x: [[newIndex, newIndex]],
+        x: [[x[newIndex], x[newIndex]]],
         text: [`index: ${newIndex}`, `index: ${newIndex}`],
       },
       [pqrstData.length]
     );
 
     if (indexLabelRef.current) {
-      indexLabelRef.current.innerText = `${newIndex} / ${frameCount - 1}`;
+      indexLabelRef.current.innerText = `${x[newIndex]} / 1`;
     }
   };
 
@@ -216,7 +221,6 @@ export const PQRSTChart = () => {
             showgrid: false,
             range: [0, 1],
             constrain: 'range',
-            fixedrange: true,
           },
         }}
         style={{ width: '100%', height: '100%' }}
@@ -261,7 +265,7 @@ export const PQRSTChart = () => {
           ref={indexLabelRef}
           className='text-xs text-gray-400 whitespace-nowrap'
         >
-          0 / {frameCount - 1}
+          0 / {1}
         </span>
       </div>
     </div>
