@@ -155,7 +155,7 @@ export const PQRSTChart = () => {
     }
 
     if (indexLabelRef.current) {
-      indexLabelRef.current.innerText = `0 / ${frameCount - 1}`;
+      indexLabelRef.current.innerText = `${x[index.current]} / ${1}`;
     }
   }, [pqrstData.length]);
 

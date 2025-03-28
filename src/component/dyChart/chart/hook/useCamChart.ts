@@ -63,7 +63,7 @@ const generateQuiverData = (rawData, size: number, series_length: number) => {
           y1,
           line: {
             color: 'black',
-            width: 1.5,
+            width: 5,
           },
         },
         {
