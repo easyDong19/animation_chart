@@ -45,9 +45,9 @@ const generateColorPalette = (count: number): string[] => {
   return colors;
 };
 
-const createMetaInfo = (metaData: MetaInfoType) => {
-  return Object.entries(metaData).map(([key, x]) => ({
-    x: [x, x],
+const createMetaInfo = (metaData: MetaInfoType, x: number[]) => {
+  return Object.entries(metaData).map(([key, i]) => ({
+    x: [x[i], x[i]],
     y: [-1, 1],
     type: 'scatter',
     mode: 'lines+markers',
@@ -64,20 +64,34 @@ const createMetaInfo = (metaData: MetaInfoType) => {
   }));
 };
 
+const createTimeTable = (originData: any, timeKey: string = 'avg_times') => {
+  // ms단위로 변경
+  const avg_times = originData[timeKey];
+  const base = avg_times[0];
+  const timeTable = avg_times.map((t: number) => +(t - base).toFixed(4));
+  return timeTable;
+};
+
 const createPQRSTData = (
   originData: any,
   key: string = 'extracted_dev_avg_data',
-  metaInfoKey: string = 'metainfo'
+  metaInfoKey: string = 'metainfo',
+  timeKey: string = 'avg_times'
 ): TraceDataFormat[] => {
   const series = originData[key];
   const timeSeriesLength = series[0]?.length ?? 0;
+
+  // ms단위로 변경
+  const avg_times = originData[timeKey];
+
   const metaInfo = originData[metaInfoKey];
-  const metaInfoList = createMetaInfo(metaInfo);
-  const x = Array.from({ length: timeSeriesLength }, (_, i) => i);
+  const x = createTimeTable(originData);
+
+  const metaInfoList = createMetaInfo(metaInfo, x);
   const colors = generateColorPalette(series.length);
 
   const data = series.map((row: number[], idx: number) => ({
-    x,
+    x: x,
     y: row,
     type: 'scatter',
     mode: 'lines',
@@ -99,6 +113,7 @@ export const PQRSTChart = () => {
   const frameCount = pqrstData[0].x.length;
   const indexLabelRef = useRef<HTMLSpanElement>(null);
   const [speed, setSpeed] = useState<number>(1);
+  const x = createTimeTable(Rawdata);
 
   const updateKeyPoint = () => {
     index.current += 1;
@@ -106,7 +121,7 @@ export const PQRSTChart = () => {
       setIsUpdate(false);
     }
 
-    const newX = [[index.current, index.current]];
+    const newX = [[x[index.current], x[index.current]]];
     const newText = [`index: ${index.current}`, `index: ${index.current}`];
 
     window.Plotly.restyle(plotRef.current.el, { x: newX, text: newText }, [
@@ -129,7 +144,7 @@ export const PQRSTChart = () => {
     window.Plotly.restyle(
       plotRef.current.el,
       {
-        x: [[0, 0]],
+        x: [[x[index.current], x[index.current]]],
         text: ['index: 0', 'index: 0'],
       },
       [pqrstData.length]
@@ -190,6 +205,7 @@ export const PQRSTChart = () => {
         data={[...pqrstData, playKeyPoint]}
         layout={{
           showlegend: false,
+          range: [0, 1],
           xaxis: { showgrid: false },
         }}
         style={{ width: '100%', height: '100%' }}
