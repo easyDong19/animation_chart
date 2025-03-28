@@ -163,6 +163,12 @@ export const PQRSTChart = () => {
     if (isUpdate) updateKeyPoint();
   }, 100 / speed);
 
+  const handleStart = () => {
+    if (index.current < frameCount - 1) {
+      setIsUpdate(true);
+    }
+  };
+
   const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newIndex = parseInt(event.target.value);
     index.current = newIndex;
@@ -205,8 +211,13 @@ export const PQRSTChart = () => {
         data={[...pqrstData, playKeyPoint]}
         layout={{
           showlegend: false,
-          range: [0, 1],
-          xaxis: { showgrid: false },
+
+          xaxis: {
+            showgrid: false,
+            range: [0, 1],
+            constrain: 'range',
+            fixedrange: true,
+          },
         }}
         style={{ width: '100%', height: '100%' }}
         config={{
@@ -215,7 +226,7 @@ export const PQRSTChart = () => {
         }}
       />
       <div className='flex flex-row gap-3 mt-2'>
-        <button className='p-2 border' onClick={() => setIsUpdate(true)}>
+        <button className='p-2 border' onClick={handleStart}>
           시작
         </button>
         <button className='p-2 border' onClick={() => setIsUpdate(false)}>
