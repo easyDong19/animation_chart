@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { isArray } from 'lodash';
 import { ChartContainer } from './component/ChartContainer';
 import { Title } from './component/header/Title';
@@ -6,24 +6,55 @@ import { Button } from './component/header/Button';
 import { EcgChart } from './chart/components/EcgChart';
 import { HeatMapChart } from './chart/components/HeatMapChart';
 
-// todo : 컴포넌트를 넘겨도 그냥 랜더링할수있게 수정, 원래 설정도
-const fieldComponents = {
+interface BaseField {
+  type: string;
+  className?: string;
+  [key: string]: any;
+}
+
+interface ComponentField {
+  type: 'component';
+  component: ReactElement;
+}
+
+interface NestedField extends BaseField {
+  fields: Field[][];
+}
+
+type Field = BaseField | ComponentField | NestedField;
+
+// Mapping field types to components
+const fieldComponents: Record<string, React.FC<{ field: Field }>> = {
   title: Title,
   button: Button,
   ecgChart: EcgChart,
   heatMapChart: HeatMapChart,
 };
 
-const renderArrayFields = (arrayFields: any[], parentIdx: number) => {
+const renderArrayFields = (
+  arrayFields: Field[][],
+  parentIdx: number
+): JSX.Element => {
   const elements: JSX.Element[] = [];
 
-  arrayFields.forEach((row: any[], rowIdx: number) => {
-    row.forEach((field, colIdx: number) => {
+  arrayFields.forEach((row, rowIdx) => {
+    row.forEach((field, colIdx) => {
+      const key = `${parentIdx}_${rowIdx}_${colIdx}`;
+
+      if (
+        field.type === 'component' &&
+        'component' in field &&
+        React.isValidElement(field.component)
+      ) {
+        elements.push(React.cloneElement(field.component, { key }));
+        return;
+      }
+
       const FieldComponent = fieldComponents[field.type];
       if (!FieldComponent) return;
 
       elements.push(
-        <div key={`${parentIdx}_${rowIdx}_${colIdx}`}>
+        <div key={key} className={field.className}>
           <FieldComponent field={field} />
         </div>
       );
@@ -33,10 +64,20 @@ const renderArrayFields = (arrayFields: any[], parentIdx: number) => {
   return <>{elements}</>;
 };
 
-const renderField = (field: any, idx: number) => {
-  if (field.fields && isArray(field.fields)) {
+const renderField = (field: Field, idx: number): JSX.Element | null => {
+  const key = `nested_${idx}`;
+
+  if (
+    field.type === 'component' &&
+    'component' in field &&
+    React.isValidElement(field.component)
+  ) {
+    return React.cloneElement(field.component, { key });
+  }
+
+  if ('fields' in field && isArray(field.fields)) {
     return (
-      <div key={`nested_${idx}`} className={field.className}>
+      <div key={key} className={field.className}>
         {renderArrayFields(field.fields, idx)}
       </div>
     );
@@ -45,23 +86,28 @@ const renderField = (field: any, idx: number) => {
   const FieldComponent = fieldComponents[field.type];
   if (!FieldComponent) return null;
 
-  console.log(field);
-
   return (
-    <React.Fragment key={`nested_${idx}`}>
-      {FieldComponent({ field })}
-    </React.Fragment>
+    <div key={key} className={field.className}>
+      <FieldComponent field={field} />
+    </div>
   );
 };
 
-export const DyChart = ({ chartSchema }: { chartSchema: any }) => {
+interface DyChartProps {
+  chartSchema: {
+    className: string;
+    fields?: Field[];
+  };
+}
+
+export const DyChart: React.FC<DyChartProps> = ({ chartSchema }) => {
   return (
     <ChartContainer className={chartSchema.className}>
-      {(chartSchema?.fields || []).map((section, index: number) => (
-        <div key={`${index}`} className={section.className}>
-          {(section?.fields || []).map((field: any, idx: number) =>
-            renderField(field, idx)
-          )}
+      {(chartSchema.fields || []).map((section, index) => (
+        <div key={index} className={section.className}>
+          {'fields' in section && isArray(section.fields)
+            ? section.fields.map((field, idx) => renderField(field, idx))
+            : null}
         </div>
       ))}
     </ChartContainer>
